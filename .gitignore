@@ -1,0 +1,5 @@
+scripts/*.png
+scripts/*.csv
+scripts/prevision_riz_2*.json
+scripts/prevision_riz_derniere.json
+__pycache__/

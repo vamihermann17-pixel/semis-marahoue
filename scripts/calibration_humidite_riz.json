@@ -1,0 +1,35 @@
+{
+  "cycle_jours": 110,
+  "tolerance_semaines_sures": 0.75,
+  "seuils": {
+    "BETA_SEMIS": 0.2,
+    "BETA_SUIVI": 0.5,
+    "BETA_SECHE": 0.45,
+    "J_SUIVI": 21
+  },
+  "exactitude_equilibree": 0.783,
+  "exactitude_equilibree_validation_croisee": 0.796,
+  "sensibilite_semis_reussis_detectes": 0.981,
+  "specificite_semis_rates_ecartes": 0.585,
+  "part_semis_reussis": 0.805,
+  "reussite_max": {
+    "date": "13/05",
+    "proba": 0.95
+  },
+  "fenetre_80pc_du_max": [
+    "01/04",
+    "13/07"
+  ],
+  "causes_echec": {
+    "leve": 0.119,
+    "floraison": 0.004,
+    "repartition": 0.0,
+    "cumul": 0.0,
+    "fin_saison": 0.076
+  },
+  "annees": [
+    2005,
+    2024
+  ],
+  "source_criteres": "Revue Riz pluvial (H. Vami, 20/11/2026) : Sivakumar 1988, JICA, Embrapa, Kouassi et al. 2020"
+}

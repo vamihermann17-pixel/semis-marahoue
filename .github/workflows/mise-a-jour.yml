@@ -1,0 +1,63 @@
+name: Mise à jour de la prévision
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"   # chaque lundi à 5 h UTC (5 h à Abidjan)
+  workflow_dispatch:       # bouton « Run workflow » pour lancer à la main
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  prevision:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Télécharger la dernière prévision TAMSAT-ALERT
+        if: github.event_name != 'push'
+        id: calcul
+        continue-on-error: true   # en cas de panne du serveur TAMSAT, on garde la prévision précédente
+        working-directory: scripts
+        run: |
+          for essai in 1 2 3; do
+            python talert_marahoue.py && break
+            echo "Échec de l'essai $essai, nouvel essai dans 60 s"; sleep 60
+          done
+          test -f prevision_riz_derniere.json
+          cp prevision_riz_derniere.json ../docs/prevision_riz_derniere.json
+
+      - name: Enregistrer les nouvelles données
+        if: github.event_name != 'push' && steps.calcul.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/prevision_riz_derniere.json
+          git diff --cached --quiet || git commit -m "Prévision TAMSAT-ALERT du $(python -c "import json;print(json.load(open('docs/prevision_riz_derniere.json'))['date_prevision'])")"
+          git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploiement
+        uses: actions/deploy-pages@v4
