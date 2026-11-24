@@ -1,5 +1,3 @@
-scripts/*.png
-scripts/*.csv
-scripts/prevision_riz_2*.json
-scripts/prevision_riz_derniere.json
+scripts/donnees_bilan_marahoue.npz
+scripts/log*.txt
 __pycache__/

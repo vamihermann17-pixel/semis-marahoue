@@ -33,26 +33,27 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
-      - name: Télécharger la dernière prévision TAMSAT-ALERT
+      - name: Mettre à jour pluie, météo et prévision (bilan hydrique riz)
         if: github.event_name != 'push'
         id: calcul
-        continue-on-error: true   # en cas de panne du serveur TAMSAT, on garde la prévision précédente
+        continue-on-error: true   # en cas de panne d'un serveur, on garde la prévision précédente
         working-directory: scripts
+        env:
+          OUTDIR: ../docs
         run: |
           for essai in 1 2 3; do
-            python talert_marahoue.py && break
-            echo "Échec de l'essai $essai, nouvel essai dans 60 s"; sleep 60
+            python donnees_bilan.py && break
+            echo "Échec de l'essai $essai, nouvel essai dans 120 s"; sleep 120
           done
-          test -f prevision_riz_derniere.json
-          cp prevision_riz_derniere.json ../docs/prevision_riz_derniere.json
+          python fenetres_riz.py
 
       - name: Enregistrer les nouvelles données
         if: github.event_name != 'push' && steps.calcul.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/prevision_riz_derniere.json
-          git diff --cached --quiet || git commit -m "Prévision TAMSAT-ALERT du $(python -c "import json;print(json.load(open('docs/prevision_riz_derniere.json'))['date_prevision'])")"
+          git add docs/*.json scripts/cache_bilan
+          git diff --cached --quiet || git commit -m "Prévision du $(python -c "import json;print(json.load(open('docs/prevision_riz_derniere.json'))['date_prevision'])") (bilan hydrique riz)"
           git push
 
       - uses: actions/configure-pages@v5

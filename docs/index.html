@@ -79,9 +79,9 @@ td{font-variant-numeric:tabular-nums}
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Riz pluvial · Marahoué, Côte d'Ivoire · TAMSAT-ALERT</span>
+    <span class="eyebrow">Riz pluvial · Marahoué, Côte d'Ivoire · bilan hydrique FAO-56</span>
     <h1>Fenêtres de semis du riz pluvial</h1>
-    <p class="sub">Probabilité qu'un semis réussisse, d'après 20 saisons (2005–2024) et la dernière prévision d'humidité du sol TAMSAT-ALERT. Choisissez la durée de cycle de votre variété et le niveau de risque accepté.</p>
+    <p class="sub">Probabilité qu'un semis réussisse, calculée avec un bilan hydrique du riz pluvial sur 20 saisons (2005–2024) et à partir de l'état du sol d'aujourd'hui. Choisissez la durée de cycle de votre variété et le niveau de risque accepté.</p>
   </header>
 
   <div class="controls" role="group" aria-label="Réglages">
@@ -94,8 +94,8 @@ td{font-variant-numeric:tabular-nums}
       </div>
     </div>
     <div class="ctl">
-      <label class="eyebrow" for="pSeuil">Probabilité minimale pour semer : <span class="num" id="pVal">60 %</span></label>
-      <input type="range" id="pSeuil" min="30" max="90" step="5" value="60">
+      <label class="eyebrow" for="pSeuil">Probabilité minimale pour semer : <span class="num" id="pVal">80 %</span></label>
+      <input type="range" id="pSeuil" min="50" max="95" step="5" value="80">
     </div>
     <div class="ctl">
       <span class="eyebrow">Prévision utilisée</span>
@@ -107,8 +107,8 @@ td{font-variant-numeric:tabular-nums}
 
   <section class="panel" id="pFc">
     <div class="panel-head">
-      <div><span class="eyebrow">Prévision probabiliste</span><h2>Humidité du sol et chances de bon semis</h2></div>
-      <p class="muted">En haut, la disponibilité en eau du sol (beta, 0 = sol sec, 1 = sans contrainte) pour chacun des 15 scénarios météo. En bas, la part des scénarios où un semis ce jour-là est suivi de 21 jours sans stress. Survolez pour lire les valeurs.</p>
+      <div><span class="eyebrow">Prévision probabiliste</span><h2>Eau du sol et chances de réussite</h2></div>
+      <p class="muted">En haut, l'eau utile des 30 premiers centimètres d'un sol non cultivé, pour chaque saison passée rejouée à partir de l'état du sol d'aujourd'hui. En bas, la part de ces scénarios où un semis ce jour-là réussit, pour le cycle choisi. Survolez pour lire les valeurs.</p>
     </div>
     <div class="chart" id="fcChart"></div>
     <div class="legend" id="fcLegend"></div>
@@ -146,7 +146,7 @@ td{font-variant-numeric:tabular-nums}
   <section class="panel" id="pCal">
     <div class="panel-head">
       <div><span class="eyebrow">Calendrier historique</span><h2>Réussite selon la date de semis</h2></div>
-      <p class="muted">Réussite = levée sans stress hydrique, floraison sans stress (beta ≥ 0,5, au plus 7 jours de suite en dessous) et récolte avant la fin des pluies. La bande verte marque les dates à au moins 80 % du maximum. Faux départ = pluie de démarrage suivie de plus de 7 jours secs dans le mois.</p>
+      <p class="muted">Part des saisons 2005–2024 où un semis à cette date réussit d'après le bilan hydrique du riz. Les bandes vertes marquent les dates où la réussite dépasse votre seuil. Faux départ = pluie de démarrage (≥ 20 mm en 3 jours) suivie de plus de 7 jours secs dans le mois.</p>
     </div>
     <div class="chart" id="calChart"></div>
     <div class="legend" id="calLegend"></div>
@@ -156,22 +156,22 @@ td{font-variant-numeric:tabular-nums}
     <div class="panel-head"><div><span class="eyebrow">Notice</span><h2>Lire et utiliser la page</h2></div></div>
     <div class="notes">
       <div><h3>Mode d'emploi</h3><ol>
-        <li>Choisissez le cycle de la variété (NERICA courtes : 100 j ; standard : 110 j ; tardive : 120 j).</li>
-        <li>Réglez la probabilité minimale. 60 % est un compromis ; un producteur qui ne peut pas ressemer peut viser 75 à 80 %.</li>
-        <li>Le verdict donne la première date favorable de la prévision et la fenêtre historique.</li>
+        <li>Choisissez le cycle de la variété (NERICA courtes : 100 j ; standard : 110 j ; tardive : 120 j). La prévision, la carte et le calendrier suivent ce choix.</li>
+        <li>Réglez la probabilité minimale. 80 % convient à la plupart des producteurs ; celui qui ne peut pas ressemer peut viser 90 %.</li>
+        <li>Le verdict donne la première date favorable de la prévision, le meilleur jour et la fenêtre historique.</li>
         <li>La carte montre les secteurs qui atteignent le seuil en premier.</li>
       </ol></div>
       <div><h3>Méthode</h3><ul>
-        <li>Prévision : TAMSAT-ALERT, 15 scénarios (météo 2005–2019) sur 150 jours, mis à jour chaque jour.</li>
-        <li>Jour favorable : beta ≥ <span id="mS"></span> au semis, moyenne ≥ <span id="mF"></span> sur <span id="mJ"></span> j, aucune moyenne 7 j &lt; <span id="mD"></span>. Seuils calibrés sur 2005–2024 (validation croisée par année).</li>
-        <li>Critères de réussite tirés de la revue de littérature sur le riz pluvial (levée, floraison à cycle − 35 j, fin de saison).</li>
-        <li>Seule la période 1er mars – 31 juillet est évaluée.</li>
+        <li>Bilan hydrique journalier du riz pluvial (FAO-56) sur 0–60 cm : Kc 0,5 → 1,15 → 0,8, racines de 10 à 60 cm, stress dès que 20 % de l'eau utile des racines est consommée.</li>
+        <li>Réussite : germination dans les 10 jours, pas de stress fort 5 jours de suite à la levée ni à la floraison (cycle − 35 j), moins de 3 jours à plus de 35 °C à la floraison, et WRSI ≥ <span id="mW"></span>.</li>
+        <li>Prévision : état du sol d'aujourd'hui (pluies TAMSAT observées), puis météo de chaque saison passée : un scénario par année (méthode TAMSAT-ALERT).</li>
+        <li>Pluie TAMSAT v3.2 ; ET0 Penman-Monteith et Tmax NASA POWER ; réserve utile SoilGrids (Saxton et Rawls), en moyenne <span id="mR"></span> mm/m.</li>
       </ul></div>
       <div><h3>Limites</h3><ul>
-        <li>beta est calculé pour une graminée en C4 avec 1 m d'enracinement, pas pour le riz.</li>
-        <li>Pas de données de sol, de température maximale ni de variété : à valider au champ.</li>
-        <li>La même variable sert à définir la réussite et à la prévoir : les scores sont optimistes.</li>
-        <li>Au-delà de 150 jours, la prévision ne couvre pas la saison : seule la climatologie s'applique.</li>
+        <li>Paramètres du riz tirés de la littérature (FAO-56, NERICA), non encore calés au champ.</li>
+        <li>Mailles de 28 km : un seul sol et une seule pluie par maille, sans les bas-fonds.</li>
+        <li>Au-delà de quelques semaines, la prévision tient surtout de la climatologie : les scénarios ne sont pas pondérés par les prévisions saisonnières.</li>
+        <li>Météo NASA POWER à 0,5° ; le stress thermique et le ruissellement sont simplifiés.</li>
       </ul></div>
     </div>
   </section>
@@ -186,8 +186,8 @@ const NS="http://www.w3.org/2000/svg";
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 const MOISL=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
-const st={cycle:"110",p:0.60,mapMode:"first",mapDay:0};
-try{const s=JSON.parse(localStorage.getItem("semisRiz")||"{}");if(s.cycle)st.cycle=s.cycle;if(s.p)st.p=s.p;}catch(e){}
+const st={cycle:"110",p:0.80,mapMode:"first",mapDay:0};
+try{const s=JSON.parse(localStorage.getItem("semisRiz2")||"{}");if(s.cycle)st.cycle=s.cycle;if(s.p)st.p=s.p;}catch(e){}
 let CAL=null,FC=null;
 const tip=$("#tip");
 function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-250);tip.style.left=x+"px";tip.style.top=(e.clientY+14)+"px";}
@@ -199,36 +199,38 @@ const fmtL=d=>`${d.getUTCDate()} ${MOISL[d.getUTCMonth()]} ${d.getUTCFullYear()}
 const pct=v=>v==null?"–":Math.round(v*100)+" %";
 function q(arr,p){const a=arr.filter(v=>v!=null).sort((x,y)=>x-y);if(!a.length)return null;const i=(a.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo);}
 function smooth(a,w){return a.map((_,i)=>{let s=0,n=0;for(let k=i-w;k<=i+w;k++){if(k>=0&&k<a.length&&a[k]!=null&&!isNaN(a[k])){s+=a[k];n++;}}return n?s/n:null;});}
-function save(){try{localStorage.setItem("semisRiz",JSON.stringify({cycle:st.cycle,p:st.p}));}catch(e){}}
+function plages(ok){const r=[];let a=-1;ok.forEach((v,i)=>{if(v&&a<0)a=i;if(!v&&a>=0){r.push([a,i-1]);a=-1;}});if(a>=0)r.push([a,ok.length-1]);return r;}
+function save(){try{localStorage.setItem("semisRiz2",JSON.stringify({cycle:st.cycle,p:st.p}));}catch(e){}}
 
 /* ---------- Verdict ---------- */
 function verdict(){
   const c=CAL.cycles[st.cycle], v=$("#verdict"); v.innerHTML="";
   const mx=Math.max(...c.reussite), im=c.reussite.indexOf(mx);
-  const win=c.reussite.map((r,i)=>r>=0.8*mx?i:-1).filter(i=>i>=0);
+  const pl=plages(c.reussite.map(r=>r>=st.p));
   const tiles=[];
   if(FC){
-    const idx=FC.proba_zone.map((p,i)=>p!=null&&p>=st.p?i:-1).filter(i=>i>=0);
-    const ev=FC.proba_zone.map((p,i)=>p!=null?i:-1).filter(i=>i>=0);
-    let best=null;ev.forEach(i=>{if(best==null||FC.proba_zone[i]>FC.proba_zone[best])best=i;});
-    const lastDay=iso(FC.jours[FC.jours.length-1]);
+    const pz=FC.cycles[st.cycle].proba_zone, je=FC.jours_eval;
+    const idx=pz.map((p,i)=>p!=null&&p>=st.p?i:-1).filter(i=>i>=0);
+    let best=0;pz.forEach((p,i)=>{if(p>pz[best])best=i;});
+    const win=pz.map((p,i)=>p!=null&&p>=st.p?i:-1).filter(i=>i>=0);
     if(idx.length){
-      tiles.push({lab:"Prévision · première date favorable",big:fmt(iso(FC.jours[idx[0]])),pill:["good","Seuil atteint"],
-        small:`${pct(FC.proba_zone[idx[0]])} des scénarios favorables (moyenne de la zone)`});
+      tiles.push({lab:"Prévision · première date favorable",big:fmt(iso(je[idx[0]])),pill:["good","Seuil atteint"],
+        small:`${pct(pz[idx[0]])} des ${FC.scenarios.length} scénarios réussissent (moyenne de la zone).`});
     }else{
-      tiles.push({lab:"Prévision · première date favorable",big:"Pas encore",pill:["warn","Seuil non atteint"],
-        small:ev.length?`Au mieux ${pct(FC.proba_zone[best])} le ${fmt(iso(FC.jours[best]))}. Horizon jusqu'au ${fmt(lastDay)}.`:`La prévision s'arrête le ${fmt(lastDay)}, avant la période de semis.`});
+      tiles.push({lab:"Prévision · première date favorable",big:"Aucune",pill:["bad","Seuil non atteint"],
+        small:`Au mieux ${pct(pz[best])} le ${fmt(iso(je[best]))}.`});
     }
-    tiles.push({lab:"Prévision · meilleur jour couvert",big:best!=null?fmt(iso(FC.jours[best])):"–",
-      pill:best!=null?[FC.proba_zone[best]>=st.p?"good":"warn",pct(FC.proba_zone[best])]:null,
-      small:`Évalué du ${ev.length?fmt(iso(FC.jours[ev[0]])):"–"} au ${ev.length?fmt(iso(FC.jours[ev[ev.length-1]])):"–"} (fin de l'horizon de 150 j).`});
+    tiles.push({lab:`Prévision · meilleur semis, cycle ${st.cycle} j`,big:fmt(iso(je[best])),
+      pill:[pz[best]>=st.p?"good":"warn",pct(pz[best])],
+      small:win.length?`${win.length} jours au-dessus de ${Math.round(st.p*100)} % entre le ${fmt(iso(je[win[0]]))} et le ${fmt(iso(je[win[win.length-1]]))}`:"Aucun jour au-dessus du seuil choisi."});
   }
-  tiles.push({lab:`Climatologie · cycle ${st.cycle} j`,big:`${c.dates[win[0]]} → ${c.dates[win[win.length-1]]}`,pill:["good","Fenêtre conseillée"],
+  tiles.push({lab:`Climatologie · cycle ${st.cycle} j`,big:pl.length?pl.map(([a,b])=>`${c.dates[a]} → ${c.dates[b]}`).join(" · "):"Aucune",
+    pill:pl.length?["good",pl.length>1?`${pl.length} fenêtres ≥ ${Math.round(st.p*100)} %`:`Fenêtre ≥ ${Math.round(st.p*100)} %`]:["bad","Seuil jamais atteint"],
     small:`Optimum le ${c.dates[im]} : ${pct(mx)} des saisons réussies.`});
   const marsI=c.dates.map((d,i)=>d.endsWith("/03")?i:-1).filter(i=>i>=0);
   const marsR=marsI.reduce((s,i)=>s+c.reussite[i],0)/marsI.length;
   tiles.push({lab:"Climatologie · semis de mars",big:pct(marsR),pill:[marsR<0.6?"bad":marsR<0.8?"warn":"good",marsR<0.6?"Risqué":marsR<0.8?"Prudence":"Favorable"],
-    small:"Réussite moyenne d'un semis en mars, souvent compromis par une levée sous stress."});
+    small:"Réussite moyenne d'un semis en mars sur 2005–2024."});
   tiles.forEach(t=>{const d=document.createElement("div");d.className="tile";
     d.innerHTML=`<span class="eyebrow">${t.lab}</span><span class="big">${t.big}</span>${t.pill?`<span class="pill ${t.pill[0]}">${t.pill[1]}</span>`:""}<span class="small">${t.small}</span>`;v.appendChild(d);});
 }
@@ -237,59 +239,53 @@ function verdict(){
 function fcChart(){
   const box=$("#fcChart");box.innerHTML="";
   if(!FC){box.innerHTML='<p class="err">Prévision indisponible : le fichier prevision_riz_derniere.json n\'a pas pu être lu.</p>';return;}
-  const W=960,H=420,L=52,R=16,T=14,H1=220,G=34,H2=120,B=30;
-  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Prévision de beta et probabilité de semis favorable"},box);
-  const n=FC.jours.length, x=i=>L+(W-L-R)*i/(n-1);
+  const je=FC.jours_eval, pz=FC.cycles[st.cycle].proba_zone;
+  const n=FC.jours.indexOf(je[je.length-1])+1;           // de l'émission au dernier semis évalué
+  const W=960,H=420,L=52,R=16,T=14,H1=200,G=40,H2=140;
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Prévision de l'humidité du sol et de la réussite des semis"},box);
+  const x=i=>L+(W-L-R)*i/(n-1);
   const y1=v=>T+H1*(1-v), y2=v=>T+H1+G+H2*(1-v);
-  const ink=css("--ink"),muted=css("--muted"),line=css("--line"),paddy=css("--paddy"),water=css("--water"),lat=css("--laterite"),soft=css("--paddy-soft"),ochre=css("--ochre");
-  // grilles
-  [0,.25,.5,.75,1].forEach(v=>{el("line",{x1:L,x2:W-R,y1:y1(v),y2:y1(v),stroke:line,"stroke-width":1},svg);
-    const t=el("text",{x:L-8,y:y1(v)+4,"text-anchor":"end","font-size":11,fill:muted,"font-family":"IBM Plex Mono, monospace"},svg);t.textContent=v.toFixed(2);});
-  [0,.5,1].forEach(v=>{el("line",{x1:L,x2:W-R,y1:y2(v),y2:y2(v),stroke:line,"stroke-width":1},svg);
-    const t=el("text",{x:L-8,y:y2(v)+4,"text-anchor":"end","font-size":11,fill:muted,"font-family":"IBM Plex Mono, monospace"},svg);t.textContent=Math.round(v*100)+"%";});
-  // mois
-  FC.jours.forEach((s,i)=>{const d=iso(s);if(d.getUTCDate()===1){
+  const ink=css("--ink"),muted=css("--muted"),line=css("--line"),paddy=css("--paddy"),water=css("--water"),lat=css("--laterite"),soft=css("--paddy-soft");
+  const mono="IBM Plex Mono, monospace";
+  [0,.25,.5,.75,1].forEach(v=>{el("line",{x1:L,x2:W-R,y1:y1(v),y2:y1(v),stroke:line},svg);
+    const t=el("text",{x:L-8,y:y1(v)+4,"text-anchor":"end","font-size":11,fill:muted,"font-family":mono},svg);t.textContent=Math.round(v*100)+"%";});
+  [0,.5,1].forEach(v=>{el("line",{x1:L,x2:W-R,y1:y2(v),y2:y2(v),stroke:line},svg);
+    const t=el("text",{x:L-8,y:y2(v)+4,"text-anchor":"end","font-size":11,fill:muted,"font-family":mono},svg);t.textContent=Math.round(v*100)+"%";});
+  for(let i=0;i<n;i++){const d=iso(FC.jours[i]);if(d.getUTCDate()===1){
     el("line",{x1:x(i),x2:x(i),y1:T,y2:y2(0),stroke:line,"stroke-dasharray":"2 3"},svg);
-    const t=el("text",{x:x(i)+3,y:H-10,"font-size":11,fill:muted},svg);t.textContent=MOIS[d.getUTCMonth()]+(d.getUTCMonth()===0?" "+d.getUTCFullYear():"");}});
-  const lab=(txt,yy)=>{const t=el("text",{x:L,y:yy,"font-size":11,fill:muted,"font-weight":600},svg);t.textContent=txt;};
-  // période évaluée
-  const ev=FC.proba_zone.map((p,i)=>p!=null?i:-1).filter(i=>i>=0);
-  if(ev.length) el("rect",{x:x(ev[0])-1,y:T,width:x(ev[ev.length-1])-x(ev[0])+2,height:H1+G+H2,fill:soft,opacity:.45},svg);
-  // bande p10–p90
-  const p10=[],p50=[],p90=[];
-  for(let i=0;i<n;i++){const col=FC.beta_membres.map(m=>m[i]);p10.push(q(col,.1));p50.push(q(col,.5));p90.push(q(col,.9));}
+    const t=el("text",{x:x(i)+3,y:H-8,"font-size":11,fill:muted},svg);t.textContent=MOIS[d.getUTCMonth()]+(d.getUTCMonth()===0?" "+d.getUTCFullYear():"");}}
+  const lab=(txt,yy)=>{const t=el("text",{x:L+4,y:yy,"font-size":11,fill:muted,"font-weight":600},svg);t.textContent=txt;};
+  const i0=FC.jours.indexOf(je[0]);
+  el("rect",{x:x(i0)-1,y:T,width:x(n-1)-x(i0)+2,height:H1+G+H2,fill:soft,opacity:.45},svg);
+  const M=FC.humidite_membres, p10=[],p50=[],p90=[];
+  for(let i=0;i<n;i++){const col=M.map(m=>m[i]);p10.push(q(col,.1));p50.push(q(col,.5));p90.push(q(col,.9));}
   let dA="";for(let i=0;i<n;i++)dA+=(i?"L":"M")+x(i).toFixed(1)+","+y1(p90[i]).toFixed(1);
   for(let i=n-1;i>=0;i--)dA+="L"+x(i).toFixed(1)+","+y1(p10[i]).toFixed(1);
-  el("path",{d:dA+"Z",fill:paddy,opacity:.16},svg);
-  FC.beta_membres.forEach(m=>{let d="";m.forEach((v,i)=>{if(v!=null)d+=(d?"L":"M")+x(i).toFixed(1)+","+y1(v).toFixed(1);});
-    el("path",{d,fill:"none",stroke:muted,"stroke-width":.7,opacity:.45},svg);});
-  let dm="";p50.forEach((v,i)=>{dm+=(i?"L":"M")+x(i).toFixed(1)+","+y1(v).toFixed(1);});
-  el("path",{d:dm,fill:"none",stroke:paddy,"stroke-width":2.4},svg);
-  const s=FC.seuils;
-  el("line",{x1:L,x2:W-R,y1:y1(s.BETA_SEMIS),y2:y1(s.BETA_SEMIS),stroke:ochre,"stroke-dasharray":"6 4","stroke-width":1.4},svg);
-  el("line",{x1:L,x2:W-R,y1:y1(s.BETA_SUIVI),y2:y1(s.BETA_SUIVI),stroke:water,"stroke-dasharray":"2 3","stroke-width":1.2},svg);
-  lab("beta (disponibilité en eau du sol)",T+12);
-  // barres de probabilité
+  el("path",{d:dA+"Z",fill:water,opacity:.16},svg);
+  M.forEach(m=>{let d="";for(let i=0;i<n;i++)if(m[i]!=null)d+=(d?"L":"M")+x(i).toFixed(1)+","+y1(m[i]).toFixed(1);
+    el("path",{d,fill:"none",stroke:muted,"stroke-width":.6,opacity:.4},svg);});
+  let dm="";for(let i=0;i<n;i++)dm+=(i?"L":"M")+x(i).toFixed(1)+","+y1(p50[i]).toFixed(1);
+  el("path",{d:dm,fill:"none",stroke:water,"stroke-width":2.4},svg);
+  lab("eau utile du sol 0–30 cm (part de la réserve), sol non cultivé",T+12);
   const bw=Math.max(1.5,(W-L-R)/n-1);
-  ev.forEach(i=>{const p=FC.proba_zone[i];el("rect",{class:"p",x:x(i)-bw/2,y:y2(p),width:bw,height:y2(0)-y2(p),fill:p>=st.p?paddy:soft},svg);});
+  je.forEach((s,k)=>{const i=FC.jours.indexOf(s),p=pz[k];if(p==null)return;
+    el("rect",{x:x(i)-bw/2,y:y2(p),width:bw,height:y2(0)-y2(p),fill:p>=st.p?paddy:soft},svg);});
   el("line",{x1:L,x2:W-R,y1:y2(st.p),y2:y2(st.p),stroke:lat,"stroke-width":1.4,"stroke-dasharray":"5 3"},svg);
-  lab("probabilité de semis favorable",T+H1+G-6);
-  if(!ev.length){const t=el("text",{x:(L+W-R)/2,y:y2(.5),"text-anchor":"middle","font-size":12,fill:muted},svg);t.textContent="Aucun jour de la période de semis (1er mars – 31 juillet) dans l'horizon de cette prévision";}
-  // survol
+  lab(`réussite d'un semis ce jour-là (riz ${st.cycle} j)`,T+H1+G-8);
   const cur=el("line",{x1:0,x2:0,y1:T,y2:y2(0),stroke:ink,"stroke-width":1,opacity:0},svg);
   const hit=el("rect",{x:L,y:T,width:W-L-R,height:H1+G+H2,fill:"transparent"},svg);
   hit.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)*W/r.width;
     const i=Math.max(0,Math.min(n-1,Math.round((px-L)/(W-L-R)*(n-1))));cur.setAttribute("x1",x(i));cur.setAttribute("x2",x(i));cur.setAttribute("opacity",.5);
-    const pz=FC.proba_zone[i];
-    showTip(e,`<b>${fmtL(iso(FC.jours[i]))}</b><br>beta médian ${p50[i].toFixed(2)} (10–90 % : ${p10[i].toFixed(2)}–${p90[i].toFixed(2)})<br>Humidité 0–10 cm : ${FC.sm_mediane[i]!=null?FC.sm_mediane[i].toFixed(3):"–"} m³/m³${pz!=null?`<br>Semis favorable : <b>${pct(pz)}</b>`:""}`);});
+    const k=je.indexOf(FC.jours[i]), w=k>=0?FC.cycles[st.cycle].wrsi_med[k]:null;
+    showTip(e,`<b>${fmtL(iso(FC.jours[i]))}</b><br>Eau utile 0–30 cm : ${pct(p50[i])} (10–90 % : ${pct(p10[i])}–${pct(p90[i])})${k>=0?`<br>Semis ce jour : <b>${pct(pz[k])}</b> de réussite<br>WRSI médian : ${w!=null?Math.round(w):"–"}`:""}`);});
   hit.addEventListener("mouseleave",()=>{cur.setAttribute("opacity",0);hideTip();});
-  $("#fcLegend").innerHTML=`<span><i style="background:${paddy}"></i>Médiane des 15 scénarios</span><span><i style="background:${paddy};opacity:.25"></i>10e–90e centile</span><span><i style="background:${ochre}"></i>Seuil de semis (beta ${s.BETA_SEMIS})</span><span><i style="background:${water}"></i>Moyenne exigée sur ${s.J_SUIVI} j (${s.BETA_SUIVI})</span><span><i style="background:${lat}"></i>Votre seuil de probabilité</span><span><i style="background:${soft}"></i>Période de semis évaluée</span>`;
+  $("#fcLegend").innerHTML=`<span><i style="background:${water}"></i>Médiane des ${FC.scenarios.length} scénarios</span><span><i style="background:${water};opacity:.25"></i>10e–90e centile</span><span><i style="background:${paddy}"></i>Réussite ≥ votre seuil</span><span><i style="background:${lat}"></i>Votre seuil de probabilité</span><span><i style="background:${soft}"></i>Période de semis évaluée</span>`;
 }
 
 /* ---------- Carte ---------- */
 function mapDraw(){
   const box=$("#map");box.innerHTML="";
-  if(!FC||!FC.jours_eval.length){box.innerHTML='<p class="muted">La prévision actuelle ne couvre pas encore la période de semis : la carte apparaîtra quand l\'horizon de 150 jours atteindra le 1er mars.</p>';$("#mapLegend").innerHTML="";return;}
+  if(!FC||!FC.jours_eval.length){box.innerHTML='<p class="muted">La période de semis de cette saison est terminée.</p>';$("#mapLegend").innerHTML="";return;}
   const lat=FC.lat.slice(),lon=FC.lon.slice(),ny=lat.length,nx=lon.length;
   const order=lat.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).map(a=>a[1]);  // nord en haut
   const W=440,L=58,T=10,cs=(W-L-10)/nx,H=T+cs*ny+34;
@@ -304,7 +300,7 @@ function mapDraw(){
   const vals=[];
   order.forEach((ii,r)=>{lon.forEach((lo,j)=>{
     let v,fill,txt;
-    const ser=FC.proba_pixels.map(d=>d[ii][j]);
+    const ser=FC.cycles[st.cycle].proba_pixels.map(d=>d[ii][j]);
     if(ser.every(p=>p==null)){fill="transparent";txt="hors données";}
     else if(st.mapMode==="first"){const k=ser.findIndex(p=>p!=null&&p>=st.p);
       if(k<0){fill=css("--surface");txt=`seuil non atteint avant le ${fmt(iso(FC.jours_eval[ne-1]))} (max ${pct(Math.max(...ser.filter(p=>p!=null)))})`;v=null;}
@@ -332,8 +328,8 @@ function calChart(){
   const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Réussite par date de semis"},box);
   const c=CAL.cycles[st.cycle],n=c.dates.length,x=i=>L+(W-L-R)*i/(n-1),y=v=>T+PH*(1-v);
   const muted=css("--muted"),line=css("--line"),paddy=css("--paddy"),lat=css("--laterite"),soft=css("--paddy-soft"),ink=css("--ink");
-  const mx=Math.max(...c.reussite),win=c.reussite.map((r,i)=>r>=.8*mx?i:-1).filter(i=>i>=0);
-  el("rect",{x:x(win[0]),y:T,width:x(win[win.length-1])-x(win[0]),height:PH,fill:soft,opacity:.55},svg);
+  const mx=Math.max(...c.reussite);
+  plages(c.reussite.map(r=>r>=st.p)).forEach(([a,b])=>el("rect",{x:x(a),y:T,width:Math.max(2,x(b)-x(a)),height:PH,fill:soft,opacity:.55},svg));
   [0,.25,.5,.75,1].forEach(v=>{el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:line},svg);
     const t=el("text",{x:L-8,y:y(v)+4,"text-anchor":"end","font-size":11,fill:muted,"font-family":"IBM Plex Mono, monospace"},svg);t.textContent=Math.round(v*100)+"%";});
   c.dates.forEach((d,i)=>{if(d.startsWith("01/")){el("line",{x1:x(i),x2:x(i),y1:T,y2:T+PH,stroke:line,"stroke-dasharray":"2 3"},svg);
@@ -357,21 +353,22 @@ function calChart(){
     const o=Object.keys(CAL.cycles).map(k=>`${k} j : ${pct(CAL.cycles[k].reussite[i])}`).join(" · ");
     showTip(e,`<b>Semis le ${c.dates[i]}</b><br>Réussite (cycle ${st.cycle} j) : <b>${pct(c.reussite[i])}</b><br>${o}<br>Faux départ : ${fs[i]!=null?pct(fs[i]):"–"}`);});
   hit.addEventListener("mouseleave",()=>{cur.setAttribute("opacity",0);hideTip();});
-  $("#calLegend").innerHTML=`<span><i style="background:${paddy}"></i>Réussite, cycle ${st.cycle} j</span><span><i style="background:${muted};opacity:.6"></i>Autres cycles</span><span><i style="background:${lat}"></i>Risque de faux départ (moyenne 7 j)</span><span><i style="background:${soft}"></i>Fenêtre ≥ 80 % du maximum</span>`;
+  $("#calLegend").innerHTML=`<span><i style="background:${paddy}"></i>Réussite, cycle ${st.cycle} j</span><span><i style="background:${muted};opacity:.6"></i>Autres cycles</span><span><i style="background:${lat}"></i>Risque de faux départ (moyenne 7 j)</span><span><i style="background:${soft}"></i>Dates ≥ votre seuil</span>`;
 }
 
 /* ---------- Tableau mensuel ---------- */
 function monthTable(){
   const c=CAL.cycles[st.cycle],t=$("#monthTbl");
-  let h=`<thead><tr><th>Mois</th><th>Réussite</th><th>Faux départs</th><th>Jours ≥ seuil</th></tr></thead><tbody>`;
+  let h=`<thead><tr><th>Mois</th><th>Réussite</th><th>WRSI médian</th><th>Faux départs</th><th>Jours ≥ seuil</th></tr></thead><tbody>`;
   ["03","04","05","06","07"].forEach(m=>{const ix=c.dates.map((d,i)=>d.endsWith("/"+m)?i:-1).filter(i=>i>=0);
     const r=ix.reduce((s,i)=>s+c.reussite[i],0)/ix.length;
     const fv=ix.map(i=>c.faux_depart[i]).filter(v=>v!=null&&!isNaN(v));const f=fv.length?fv.reduce((a,b)=>a+b,0)/fv.length:null;
     const ok=ix.filter(i=>c.reussite[i]>=st.p).length;
-    h+=`<tr><td>${MOISL[+m-1]}</td><td>${pct(r)}<span class="bar" style="width:${Math.round(r*60)}px"></span></td><td>${pct(f)}</td><td>${ok} / ${ix.length}</td></tr>`;});
+    const wv=ix.map(i=>c.wrsi_med[i]).filter(v=>v!=null).sort((a,b)=>a-b);const w=wv.length?wv[Math.floor(wv.length/2)]:null;
+    h+=`<tr><td>${MOISL[+m-1]}</td><td>${pct(r)}<span class="bar" style="width:${Math.round(r*60)}px"></span></td><td>${w==null?"–":Math.round(w)}</td><td>${pct(f)}</td><td>${ok} / ${ix.length}</td></tr>`;});
   t.innerHTML=h+"</tbody>";
-  const k=c.calibration,cs=c.causes||{};
-  $("#calibTxt").innerHTML=`Calibration (cycle ${st.cycle} j) : exactitude équilibrée <span class="num">${k.exactitude_equilibree}</span>, en validation croisée <span class="num">${k.exactitude_equilibree_validation_croisee}</span> ; ${pct(k.sensibilite_semis_reussis_detectes)} des semis réussis détectés, ${pct(k.specificite_semis_rates_ecartes)} des semis ratés écartés. Causes d'échec : levée ${cs.leve||"–"}, floraison ${cs.floraison||"–"}, fin de saison ${cs.fin_saison||"–"}.`;
+  const cs=c.causes||{},pa=CAL.parametres;
+  $("#calibTxt").innerHTML=`Échecs (part de tous les semis simulés, cycle ${st.cycle} j) : ${Object.entries(cs).map(([k,v])=>`${k} ${v}`).join(", ")}. WRSI = part des besoins en eau du riz couverts sur le cycle (100 = aucun déficit) ; réussite exigée : WRSI ≥ ${pa.WRSI_MIN}.`;
 }
 
 function renderAll(){
@@ -393,10 +390,10 @@ Promise.all([
 ]).then(([cal,fc])=>{
   CAL=cal;FC=fc;
   if(FC){const d=iso(FC.date_prevision);
-    $("#fcInfo").textContent=`${fmtL(d)} · ${FC.membres} scénarios (${FC.annees_meteo[0]}–${FC.annees_meteo[1]})`;
-    const s=FC.seuils;$("#mS").textContent=s.BETA_SEMIS;$("#mF").textContent=s.BETA_SUIVI;$("#mJ").textContent=s.J_SUIVI;$("#mD").textContent=s.BETA_SECHE;
+    $("#fcInfo").textContent=`${fmtL(d)} · ${FC.scenarios.length} scénarios (saisons ${FC.scenarios[0]}–${FC.scenarios[FC.scenarios.length-1]})`;
+    $("#mW").textContent=CAL.parametres.WRSI_MIN;$("#mR").textContent=CAL.parametres.ru_mm_m_moy;
     if(FC.jours_eval.length){$("#mapDay").max=FC.jours_eval.length-1;st.mapDay=FC.jours_eval.length-1;$("#mapDay").value=st.mapDay;$("#mapDayVal").textContent=fmt(iso(FC.jours_eval[st.mapDay]));}
-    $("#foot").textContent=`Données : TAMSAT-ALERT (Université de Reading), prévision du ${fmtL(d)} ; historique TAMSAT-ALERT et CHIRPS 2005–2024. Zone : ${CAL.zone}.`;
+    $("#foot").textContent=`Données : pluie TAMSAT v3.2 (Université de Reading) jusqu'au ${fmtL(new Date(d.getTime()-864e5))} ; météo NASA POWER ; sol SoilGrids 2.0 (ISRIC). Zone : ${CAL.zone}.`;
   }else{$("#fcInfo").textContent="indisponible";}
   renderAll();
 }).catch(e=>{$("#verdict").innerHTML=`<p class="err">Les données n'ont pas pu être chargées (${e.message}). Rechargez la page.</p>`;});
