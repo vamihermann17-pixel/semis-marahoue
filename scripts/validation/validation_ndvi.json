@@ -1,0 +1,90 @@
+{
+ "EVI août–oct.": {
+  "riz : réussite, semis 15 mai–30 juin": {
+   "r_mailles": 0.172,
+   "n": 720,
+   "r_zone": 0.388,
+   "p_zone": 0.0924
+  },
+  "riz : WRSI médian, semis 15 mai–30 juin": {
+   "r_mailles": 0.364,
+   "n": 720,
+   "r_zone": 0.602,
+   "p_zone": 0.0056
+  },
+  "riz : réussite, semis 1er mars–31 juil.": {
+   "r_mailles": 0.082,
+   "n": 720,
+   "r_zone": 0.263,
+   "p_zone": 0.2655
+  },
+  "riz : eau utile 0–30 cm, août–oct.": {
+   "r_mailles": 0.464,
+   "n": 720,
+   "r_zone": 0.788,
+   "p_zone": 0.0002
+  },
+  "beta TAMSAT-ALERT (C4, 1 m), août–oct.": {
+   "r_mailles": 0.41,
+   "n": 720,
+   "r_zone": 0.591,
+   "p_zone": 0.007
+  },
+  "pluie TAMSAT juin–sept.": {
+   "r_mailles": 0.392,
+   "n": 720,
+   "r_zone": 0.597,
+   "p_zone": 0.0058
+  },
+  "pluie TAMSAT juillet": {
+   "r_mailles": 0.362,
+   "n": 720,
+   "r_zone": 0.623,
+   "p_zone": 0.0038
+  }
+ },
+ "EVI sept.–nov.": {
+  "riz : réussite, semis 15 mai–30 juin": {
+   "r_mailles": -0.03,
+   "n": 720,
+   "r_zone": 0.11,
+   "p_zone": 0.6481
+  },
+  "riz : WRSI médian, semis 15 mai–30 juin": {
+   "r_mailles": 0.188,
+   "n": 720,
+   "r_zone": 0.43,
+   "p_zone": 0.0602
+  },
+  "riz : réussite, semis 1er mars–31 juil.": {
+   "r_mailles": -0.088,
+   "n": 720,
+   "r_zone": 0.039,
+   "p_zone": 0.8732
+  },
+  "riz : eau utile 0–30 cm, août–oct.": {
+   "r_mailles": 0.349,
+   "n": 720,
+   "r_zone": 0.591,
+   "p_zone": 0.0066
+  },
+  "beta TAMSAT-ALERT (C4, 1 m), août–oct.": {
+   "r_mailles": 0.346,
+   "n": 720,
+   "r_zone": 0.511,
+   "p_zone": 0.022
+  },
+  "pluie TAMSAT juin–sept.": {
+   "r_mailles": 0.346,
+   "n": 720,
+   "r_zone": 0.501,
+   "p_zone": 0.026
+  },
+  "pluie TAMSAT juillet": {
+   "r_mailles": 0.239,
+   "n": 720,
+   "r_zone": 0.483,
+   "p_zone": 0.0324
+  }
+ }
+}

@@ -73,6 +73,10 @@ td{font-variant-numeric:tabular-nums}
 .notes h3{font:600 .95rem var(--f-body);margin:0 0 6px}
 .notes ul,.notes ol{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
 .err{color:var(--bad)}
+.vh{font:600 .95rem var(--f-body);margin:0 0 4px}
+.small{font-size:.86rem}
+#validation a{color:var(--water)}
+#valTbl td:first-child{white-space:normal}
 .mapbox svg{display:block;width:100%;max-width:440px;height:auto;margin:0 auto}
 @media (prefers-reduced-motion:no-preference){.chart rect.p{transition:fill .2s}}
 </style>
@@ -108,7 +112,7 @@ td{font-variant-numeric:tabular-nums}
   <section class="panel" id="pFc">
     <div class="panel-head">
       <div><span class="eyebrow">Prévision probabiliste</span><h2>Eau du sol et chances de réussite</h2></div>
-      <p class="muted">En haut, l'eau utile des 30 premiers centimètres d'un sol non cultivé, pour chaque saison passée rejouée à partir de l'état du sol d'aujourd'hui. En bas, la part de ces scénarios où un semis ce jour-là réussit, pour le cycle choisi. Survolez pour lire les valeurs.</p>
+      <p class="muted">En haut, l'eau utile des 30 premiers centimètres d'un sol non cultivé, pour chaque saison passée rejouée à partir de l'état du sol d'aujourd'hui. En bas, la part de ces scénarios où un semis ce jour-là réussit, pour le cycle choisi. Survolez pour lire les valeurs. Le test sur 20 saisons montre que cette prévision n'est pas encore meilleure que la climatologie (voir Validation).</p>
     </div>
     <div class="chart" id="fcChart"></div>
     <div class="legend" id="fcLegend"></div>
@@ -152,6 +156,32 @@ td{font-variant-numeric:tabular-nums}
     <div class="legend" id="calLegend"></div>
   </section>
 
+  <section class="panel" id="validation">
+    <div class="panel-head">
+      <div><span class="eyebrow">Validation · novembre 2026</span><h2>Ce que valent ces probabilités</h2></div>
+      <p class="muted">Deux tests indépendants sur 2005–2025. Détails et protocole de terrain : <a href="https://github.com/vamihermann17-pixel/semis-marahoue/blob/main/VALIDATION.md">VALIDATION.md</a>.</p>
+    </div>
+    <div class="two">
+      <div>
+        <h3 class="vh">Comparé à la végétation vue par satellite</h3>
+        <p class="muted small">Corrélation (Spearman) avec les anomalies d'EVI MODIS d'août–octobre sur les champs, jachères et savanes, moyenne de la zone, 20 ans.</p>
+        <table id="valTbl"><thead><tr><th>Indicateur</th><th>r</th><th>p</th></tr></thead><tbody>
+          <tr><td>Bilan riz : eau du sol 0–30 cm</td><td><b>0,79</b><span class="bar" style="width:47px"></span></td><td>&lt; 0,001</td></tr>
+          <tr><td>Bilan riz : WRSI, semis mi-mai–juin</td><td>0,60<span class="bar" style="width:36px"></span></td><td>0,006</td></tr>
+          <tr><td>beta TAMSAT-ALERT (C4, 1 m)</td><td>0,59<span class="bar" style="width:35px;background:var(--muted)"></span></td><td>0,007</td></tr>
+          <tr><td>Pluie juin–septembre</td><td>0,60<span class="bar" style="width:36px;background:var(--muted)"></span></td><td>0,006</td></tr>
+        </tbody></table>
+        <p class="small">Le bilan riz suit mieux les bonnes et mauvaises années que beta ou la pluie seule. Ce test valide l'eau du sol, pas encore les seuils de réussite du riz.</p>
+      </div>
+      <div>
+        <h3 class="vh">Prévision rejouée sur 20 saisons</h3>
+        <p class="muted small">Prévisions refaites au 1er décembre, février, mars, avril et mai, comparées à ce qui s'est passé.</p>
+        <p><span class="pill warn">Pas de gain sur la climatologie</span></p>
+        <p class="small">Gain mesuré (score de Brier) : entre −0,1 % et +0,3 % selon la date. L'état du sol d'aujourd'hui ne dit presque rien de la réussite d'un semis dans plusieurs semaines : la réserve de 0–60 cm se renouvelle vite. Les probabilités affichées valent donc surtout comme <b>climatologie de chaque date de semis</b>. Un vrai gain viendra des prévisions saisonnières et des prévisions météo à 1–2 semaines au moment de semer.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="panel">
     <div class="panel-head"><div><span class="eyebrow">Notice</span><h2>Lire et utiliser la page</h2></div></div>
     <div class="notes">
@@ -170,7 +200,7 @@ td{font-variant-numeric:tabular-nums}
       <div><h3>Limites</h3><ul>
         <li>Paramètres du riz tirés de la littérature (FAO-56, NERICA), non encore calés au champ.</li>
         <li>Mailles de 28 km : un seul sol et une seule pluie par maille, sans les bas-fonds.</li>
-        <li>Au-delà de quelques semaines, la prévision tient surtout de la climatologie : les scénarios ne sont pas pondérés par les prévisions saisonnières.</li>
+        <li>La prévision ne bat pas encore la climatologie : les scénarios ne sont pas pondérés par les prévisions saisonnières.</li>
         <li>Météo NASA POWER à 0,5° ; le stress thermique et le ruissellement sont simplifiés.</li>
       </ul></div>
     </div>
