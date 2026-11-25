@@ -32,8 +32,8 @@ CULTURE = os.environ.get("CULTURE", "riz")
 PARAM = B.choisir_culture(CULTURE)
 CYCLES = PARAM["cycles"]
 SUFFIXE = "riz" if CULTURE == "riz" else CULTURE
+DEB, FIN = PARAM.get("semis", ((3, 1), (7, 31)))         # période de semis (ou de plantation) évaluée
 REGLE_3J, REGLE_10J = 20.0, 40.0     # règle de semis : ≥ 20 mm en 3 jours ou ≥ 40 mm en 10 jours (pluie observée)
-DEB, FIN = (3, 1), (7, 31)          # période de semis évaluée
 AN_MIN, AN_MAX = 2005, 2024          # années complètes servant de climatologie et de scénarios
 r3 = lambda a: [None if not np.isfinite(x) else round(float(x), 3) for x in np.ravel(a)]
 
@@ -55,7 +55,8 @@ def charger():
 
 def dates_semis(annee):
     d0, d1 = dt.date(annee, *DEB), dt.date(annee, *FIN)
-    return [d0 + dt.timedelta(days=k) for k in range((d1 - d0).days + 1)]
+    jours = [d0 + dt.timedelta(days=k) for k in range((d1 - d0).days + 1)]
+    return [d for d in jours if (d.month, d.day) != (2, 29)]      # même nombre de dates chaque année
 
 
 def faux_departs(pluie, dates, annees):
@@ -95,8 +96,9 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
         p = succ.mean(axis=(0, 2, 3))
         n = causes.size
         res[L] = {"reussite": p, "wrsi_med": np.median(wrsi, axis=(0, 2, 3)),
-                  "causes": {B.CAUSES[c]: f"{(causes == c).sum() / n:.0%}" for c in B.CAUSES
-                             if c != 6 or "recolte_humide" in PARAM},
+                  "causes": {PARAM.get("noms_causes", {}).get(c, B.CAUSES[c]): f"{(causes == c).sum() / n:.0%}" for c in B.CAUSES
+                             if (c != 6 or "recolte_humide" in PARAM) and (c != 4 or PARAM.get("chaleur", True))
+                             and (c != 1 or PARAM.get("germination", True))},
                   "succ_annee": succ.mean(axis=(2, 3)),
                   "reussite_regle": np.array([succ[:, k][regle[:, k]].mean() if regle[:, k].sum() >= 20 else np.nan
                                               for k in range(succ.shape[1])]),
@@ -105,7 +107,7 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
         jours = dates_semis(2027)
         print(f"Cycle {L} j : maximum {mx:.0%} le {jours[im]:%d/%m}, fenêtre {jours[win[0]]:%d/%m} → "
               f"{jours[win[-1]]:%d/%m} ; causes {res[L]['causes']}")
-        for m in (3, 4, 5, 6, 7):
+        for m in sorted({d.month for d in jours}):
             ks = [k for k, d in enumerate(jours) if d.month == m]
             print(f"   {m:02d} : réussite {p[ks].mean():.0%}, WRSI médian {np.median(res[L]['wrsi_med'][ks]):.0f}")
     return res, annees

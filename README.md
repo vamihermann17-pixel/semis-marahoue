@@ -1,4 +1,4 @@
-# Fenêtres de semis du riz, du maïs et de l'arachide — Marahoué (Côte d'Ivoire)
+# Fenêtres de semis et de plantation — riz, maïs, arachide, igname — Marahoué (Côte d'Ivoire)
 
 Page web : https://vamihermann17-pixel.github.io/semis-marahoue/
 
@@ -12,6 +12,10 @@ Maïs (FAO-56) : 0–100 cm, Kc 0,4 → 1,2 → 0,5, racines de 10 à 100 cm, p 
 Arachide (FAO-56) : 0–100 cm, Kc 0,4 → 1,15 → 0,6, racines de 10 à 80 cm, p = 0,50, cycles 90/105/120 j ;
 échec si Ks < 0,5 5 jours de suite à la levée ou pendant floraison et gousses (45 % du cycle, −10 à +20 j),
 ou si plus de 80 mm de pluie tombent dans les 15 jours autour de la maturité (récolte sous la pluie).
+
+Igname : plantation du 1er février au 31 mai, cycles 210/240/270 j, 0–60 cm, Kc 0,4 → 1,05 → 0,6, p = 0,50,
+pas de condition de germination (pousses vers 30 j) ; échec si Ks < 0,5 10 jours de suite à la sortie des
+pousses (30–60 j) ou pendant la tubérisation (40–75 % du cycle), ou WRSI < 75.
 
 ## Méthode
 - `scripts/bilan_riz.py` : bilan hydrique FAO-56 sur 0–60 cm (3 couches). Kc du riz 0,5 → 1,15 → 0,8,

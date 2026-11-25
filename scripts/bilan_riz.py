@@ -48,6 +48,17 @@ CULTURES = {
                  "p": 0.50, "flo": lambda L: round(0.45 * L), "fen_flo": (-10, 20),
                  # récolte sous la pluie : gousses qui ne sèchent pas, pourriture, aflatoxines
                  "recolte_humide": {"debut": -5, "fin": 10, "mm": 80.0}},
+    # Igname (Dioscorea, surtout D. rotundata et D. alata) : plantée de février à mai sur buttes ;
+    # la semenceau germe sur ses réserves, les pousses sortent vers 30 jours (pas de condition
+    # d'humidité à la plantation). Kc d'après les mesures publiées pour l'igname (≈ 0,4 → 1,05 → 0,6),
+    # racines surtout dans les 60 premiers cm. Phase sensible : initiation et grossissement des
+    # tubercules (≈ 40 à 75 % du cycle) ; l'igname supporte des sécheresses courtes, d'où 10 jours.
+    "igname": {"nom": "igname", "cycles": (210, 240, 270), "ep": (100.0, 200.0, 300.0),
+               "semis": ((2, 1), (5, 31)), "germination": False, "fen_levee": (30, 60), "chaleur": False,
+               "kc": ((0, .12, .35, .80, 1.0), (0.4, 0.4, 1.05, 1.05, 0.6)), "racines": (100.0, 600.0, 0.35),
+               "p": 0.50, "flo": lambda L: 0, "fen_flo": lambda L: (round(0.40 * L), round(0.75 * L)),
+               "jours_stress": 10,
+               "noms_causes": {2: "reprise des pousses", 3: "tubérisation (sécheresse)"}},
 }
 CULTURE = "riz"
 EP = np.array(CULTURES["riz"]["ep"])          # épaisseur des couches (mm)
@@ -139,7 +150,9 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
     """
     W = W_semis.copy()
     shp = W.shape[1:]
-    germ = np.full(shp, -1, int)
+    germ = np.full(shp, -1, int) if CULTURES[CULTURE].get("germination", True) else np.zeros(shp, int)
+    lev0, lev1 = CULTURES[CULTURE].get("fen_levee", (0, J_LEVEE))
+    avec_chaleur = CULTURES[CULTURE].get("chaleur", True)
     run = np.zeros(shp, int)
     lev_ko = np.zeros(shp, bool); flo_ko = np.zeros(shp, bool); chaleur = np.zeros(shp, int)
     sum_eta = np.zeros(shp); sum_etc = np.zeros(shp)
@@ -148,7 +161,8 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
     pluie_rec = np.zeros(shp)
     ks_fort = CULTURES[CULTURE].get("ks_fort", KS_FORT)
     run_stress = CULTURES[CULTURE].get("jours_stress", RUN_STRESS)
-    f0, f1 = CULTURES[CULTURE]["fen_flo"]
+    ff = CULTURES[CULTURE]["fen_flo"]
+    f0, f1 = ff(L) if callable(ff) else ff
     J = pluie_f.shape[0]
     for t in range(J):
         p, e0, tx = pluie_f[t], et0_f[t], tmax_f[t]
@@ -185,9 +199,10 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
             sum_eta += np.where(actif, eta, 0); sum_etc += np.where(actif, etc, 0)
             fort = actif & (ks < ks_fort)
             run = np.where(fort, run + 1, 0)
-            lev_ko |= (run >= run_stress) & (j <= J_LEVEE)
+            lev_ko |= (run >= run_stress) & (j >= lev0) & (j <= lev1)
             flo_ko |= (run >= run_stress) & (j >= flo + f0) & (j <= flo + f1)
-            chaleur += (actif & (abs(j - flo) <= 5) & (tx >= TMAX_CRIT)).astype(int)
+            if avec_chaleur:
+                chaleur += (actif & (abs(j - flo) <= 5) & (tx >= TMAX_CRIT)).astype(int)
     wrsi = np.where(sum_etc > 0, 100 * sum_eta / np.maximum(sum_etc, 1e-9), 0)
     cause = np.zeros(shp, int)
     if rh is not None:

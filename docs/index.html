@@ -95,6 +95,7 @@ td{font-variant-numeric:tabular-nums}
         <button type="button" data-k="riz" aria-pressed="true">Riz</button>
         <button type="button" data-k="mais" aria-pressed="false">Maïs</button>
         <button type="button" data-k="arachide" aria-pressed="false">Arachide</button>
+        <button type="button" data-k="igname" aria-pressed="false">Igname</button>
       </div>
     </div>
     <div class="ctl">
@@ -203,12 +204,14 @@ td{font-variant-numeric:tabular-nums}
       <div><h3>Méthode</h3><ul>
         <li data-k="riz">Riz (FAO-56) sur 0–60 cm : Kc 0,5 → 1,15 → 0,8, racines de 10 à 60 cm, stress dès que 20 % de l'eau utile des racines est consommée. Réussite : germination dans les 10 jours, pas de stress fort (Ks &lt; 0,5) 5 jours de suite à la levée ni autour de la floraison (cycle − 35 j), moins de 3 jours à plus de 35 °C à la floraison, WRSI ≥ <span class="mW"></span>.</li>
         <li data-k="arachide" hidden>Arachide (FAO-56) sur 0–100 cm : Kc 0,4 → 1,15 → 0,6, racines de 10 à 80 cm, stress dès que 50 % de l'eau utile des racines est consommée. Réussite : germination dans les 10 jours, pas de stress fort (Ks &lt; 0,5) 5 jours de suite à la levée ni pendant la floraison et la formation des gousses (45 % du cycle, de −10 à +20 j), WRSI ≥ <span class="mW"></span>, et <b>récolte au sec</b> : moins de 80 mm de pluie dans les 15 jours autour de la maturité (sinon gousses mal séchées, pourriture, aflatoxines).</li>
+        <li data-k="igname" hidden>Igname sur 0–60 cm, plantée du 1er février au 31 mai : la semenceau germe sur ses réserves et les pousses sortent vers 30 jours. Kc 0,4 → 1,05 → 0,6, racines de 10 à 60 cm, stress dès que 50 % de l'eau utile est consommée. Réussite : pas de stress fort (Ks &lt; 0,5) 10 jours de suite à la sortie des pousses (30–60 j) ni pendant l'initiation et le grossissement des tubercules (40 à 75 % du cycle), et WRSI ≥ <span class="mW"></span>.</li>
         <li data-k="mais" hidden>Maïs (FAO-56) sur 0–100 cm : Kc 0,4 → 1,2 → 0,5, racines de 10 à 100 cm, stress dès que 55 % de l'eau utile des racines est consommée. Réussite : germination dans les 10 jours, pas de stress modéré (Ks &lt; 0,7) 3 jours de suite à la levée ni autour de la sortie des soies (55 % du cycle, de −7 à +14 j), moins de 3 jours à plus de 35 °C à la floraison, WRSI ≥ <span class="mW"></span>.</li>
         <li>Prévision : état du sol d'aujourd'hui (pluies TAMSAT observées), puis météo de chaque saison passée : un scénario par année (méthode TAMSAT-ALERT).</li>
         <li>Pluie TAMSAT v3.2 ; ET0 Penman-Monteith et Tmax NASA POWER ; réserve utile SoilGrids (Saxton et Rawls), en moyenne <span id="mR"></span> mm/m.</li>
       </ul></div>
       <div><h3>Limites</h3><ul>
         <li>Paramètres tirés de la littérature (FAO-56 ; NERICA pour le riz), non encore calés au champ.</li>
+        <li data-k="igname" hidden>Igname : pas de coefficient FAO-56 officiel ; valeurs tirées des mesures publiées. Avec une tolérance de 5 jours de stress au lieu de 10, les plantations de mars–avril tombent à 60–70 %. Les plantations de décembre–janvier, pratiquées sur buttes, ne sont pas encore évaluées.</li>
         <li data-k="arachide" hidden>Arachide : le seuil de 80 mm de pluie autour de la récolte est un choix ; à 60 mm, la réussite baisse de 15 à 25 points, à 100 mm elle monte d'autant. Le classement des dates de semis, lui, ne change pas.</li>
         <li data-k="mais" hidden>Maïs : sur sols gravillonnaires où les racines s'arrêtent vers 60 cm, la réussite des semis de mai–juin tombe de 80–90 % à 50–60 %.</li>
         <li>Mailles de 28 km : un seul sol et une seule pluie par maille, sans les bas-fonds.</li>
@@ -228,7 +231,7 @@ const NS="http://www.w3.org/2000/svg";
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 const MOISL=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
-const CYC0={riz:"110",mais:"105",arachide:"90"};
+const CYC0={riz:"110",mais:"105",arachide:"90",igname:"240"};
 const st={culture:"riz",cycle:"110",p:0.80,mapMode:"first",mapDay:0};
 try{const s=JSON.parse(localStorage.getItem("semisRiz2")||"{}");if(s.culture&&CYC0[s.culture])st.culture=s.culture;st.cycle=s.cycle||CYC0[st.culture];if(s.p)st.p=s.p;}catch(e){}
 let CAL=null,FC=null;
@@ -280,10 +283,11 @@ function verdict(){
   tiles.push({lab:`Climatologie · cycle ${st.cycle} j`,big:pl.length?pl.map(([a,b])=>`${c.dates[a]} → ${c.dates[b]}`).join(" · "):"Aucune",
     pill:pl.length?["good",pl.length>1?`${pl.length} fenêtres ≥ ${Math.round(st.p*100)} %`:`Fenêtre ≥ ${Math.round(st.p*100)} %`]:["bad","Seuil jamais atteint"],
     small:`Optimum le ${c.dates[im]} : ${pct(mx)} des saisons réussies.`});
-  const marsI=c.dates.map((d,i)=>d.endsWith("/03")?i:-1).filter(i=>i>=0);
+  const m0=c.dates[0].slice(3),nomM0=MOISL[+m0-1];
+  const marsI=c.dates.map((d,i)=>d.endsWith("/"+m0)?i:-1).filter(i=>i>=0);
   const marsR=marsI.reduce((s,i)=>s+c.reussite[i],0)/marsI.length;
-  tiles.push({lab:"Climatologie · semis de mars",big:pct(marsR),pill:[marsR<0.6?"bad":marsR<0.8?"warn":"good",marsR<0.6?"Risqué":marsR<0.8?"Prudence":"Favorable"],
-    small:"Réussite moyenne d'un semis en mars sur 2005–2024."});
+  tiles.push({lab:`Climatologie · ${st.culture==="igname"?"plantation":"semis"} de ${nomM0}`,big:pct(marsR),pill:[marsR<0.6?"bad":marsR<0.8?"warn":"good",marsR<0.6?"Risqué":marsR<0.8?"Prudence":"Favorable"],
+    small:`Réussite moyenne ${st.culture==="igname"?"d'une plantation":"d'un semis"} en ${nomM0} sur 2005–2024.`});
   tiles.forEach(t=>{const d=document.createElement("div");d.className="tile";
     d.innerHTML=`<span class="eyebrow">${t.lab}</span><span class="big">${t.big}</span>${t.pill?`<span class="pill ${t.pill[0]}">${t.pill[1]}</span>`:""}<span class="small">${t.small}</span>`;v.appendChild(d);});
 }
@@ -324,7 +328,7 @@ function fcChart(){
   je.forEach((s,k)=>{const i=FC.jours.indexOf(s),p=pz[k];if(p==null)return;
     el("rect",{x:x(i)-bw/2,y:y2(p),width:bw,height:y2(0)-y2(p),fill:p>=st.p?paddy:soft},svg);});
   el("line",{x1:L,x2:W-R,y1:y2(st.p),y2:y2(st.p),stroke:lat,"stroke-width":1.4,"stroke-dasharray":"5 3"},svg);
-  lab(`réussite d'un semis ce jour-là (${{mais:'maïs',arachide:'arachide'}[CAL.culture]||'riz'} ${st.cycle} j)`,T+H1+G-8);
+  lab(`réussite d'un semis ce jour-là (${{mais:'maïs',arachide:'arachide',igname:'igname'}[CAL.culture]||'riz'} ${st.cycle} j)`,T+H1+G-8);
   const cur=el("line",{x1:0,x2:0,y1:T,y2:y2(0),stroke:ink,"stroke-width":1,opacity:0},svg);
   const hit=el("rect",{x:L,y:T,width:W-L-R,height:H1+G+H2,fill:"transparent"},svg);
   hit.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)*W/r.width;
@@ -413,7 +417,7 @@ function calChart(){
 function monthTable(){
   const c=CAL.cycles[st.cycle],t=$("#monthTbl");
   let h=`<thead><tr><th>Mois</th><th>Réussite</th><th>Après une bonne pluie</th><th>WRSI médian</th><th>Faux départs</th><th>Jours ≥ seuil</th></tr></thead><tbody>`;
-  ["03","04","05","06","07"].forEach(m=>{const ix=c.dates.map((d,i)=>d.endsWith("/"+m)?i:-1).filter(i=>i>=0);
+  [...new Set(c.dates.map(d=>d.slice(3)))].forEach(m=>{const ix=c.dates.map((d,i)=>d.endsWith("/"+m)?i:-1).filter(i=>i>=0);
     const r=ix.reduce((s,i)=>s+c.reussite[i],0)/ix.length;
     const fv=ix.map(i=>c.faux_depart[i]).filter(v=>v!=null&&!isNaN(v));const f=fv.length?fv.reduce((a,b)=>a+b,0)/fv.length:null;
     const ok=ix.filter(i=>c.reussite[i]>=st.p).length;
@@ -432,7 +436,7 @@ function renderAll(){
   $("#cycleSeg").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{st.cycle=b.dataset.c;save();renderAll();}));
   document.querySelectorAll("#cultSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===st.culture));
   document.querySelectorAll("li[data-k]").forEach(li=>li.hidden=li.dataset.k!==st.culture);
-  $("#titre").textContent={riz:"Fenêtres de semis du riz pluvial",mais:"Fenêtres de semis du maïs pluvial",arachide:"Fenêtres de semis de l'arachide"}[st.culture];
+  $("#titre").textContent={riz:"Fenêtres de semis du riz pluvial",mais:"Fenêtres de semis du maïs pluvial",arachide:"Fenêtres de semis de l'arachide",igname:"Fenêtres de plantation de l'igname"}[st.culture];
   $("#pSeuil").value=Math.round(st.p*100);$("#pVal").textContent=Math.round(st.p*100)+" %";
   verdict();fcChart();mapDraw();calChart();monthTable();
 }
