@@ -48,17 +48,21 @@ CULTURES = {
                  "p": 0.50, "flo": lambda L: round(0.45 * L), "fen_flo": (-10, 20),
                  # récolte sous la pluie : gousses qui ne sèchent pas, pourriture, aflatoxines
                  "recolte_humide": {"debut": -5, "fin": 10, "mm": 80.0}},
-    # Igname (Dioscorea, surtout D. rotundata et D. alata) : plantée de février à mai sur buttes ;
+    # Igname (Dioscorea, surtout D. rotundata et D. alata) : plantée de décembre à mai sur buttes ;
     # la semenceau germe sur ses réserves, les pousses sortent vers 30 jours (pas de condition
     # d'humidité à la plantation). Kc d'après les mesures publiées pour l'igname (≈ 0,4 → 1,05 → 0,6),
     # racines surtout dans les 60 premiers cm. Phase sensible : initiation et grossissement des
     # tubercules (≈ 40 à 75 % du cycle) ; l'igname supporte des sécheresses courtes, d'où 10 jours.
     "igname": {"nom": "igname", "cycles": (210, 240, 270), "ep": (100.0, 200.0, 300.0),
-               "semis": ((2, 1), (5, 31)), "germination": False, "fen_levee": (30, 60), "chaleur": False,
+               # la semenceau reste en dormance dans la butte sèche : les pousses sortent au plus tôt après
+               # 30 jours, quand le sol 0–30 cm est à moitié plein, et au plus tard après 100 jours
+               "semis": ((12, 1), (5, 31)), "germination": "pousses", "reprise": (30, 100, 0.5),
+               "fen_levee": (0, 30), "chaleur": False,
                "kc": ((0, .12, .35, .80, 1.0), (0.4, 0.4, 1.05, 1.05, 0.6)), "racines": (100.0, 600.0, 0.35),
                "p": 0.50, "flo": lambda L: 0, "fen_flo": lambda L: (round(0.40 * L), round(0.75 * L)),
                "jours_stress": 10,
-               "noms_causes": {2: "reprise des pousses", 3: "tubérisation (sécheresse)"}},
+               "noms_causes": {1: "pas de reprise (sol resté sec)", 2: "jeunes pousses (sécheresse)",
+                               3: "tubérisation (sécheresse)"}},
 }
 CULTURE = "riz"
 EP = np.array(CULTURES["riz"]["ep"])          # épaisseur des couches (mm)
@@ -126,7 +130,8 @@ def simuler_jachere(pluie, et0, cap, W0=None):
 def duree_forcage(L):
     """Nombre de jours de forçage à fournir à simuler_semis pour un cycle de L jours."""
     rh = CULTURES[CULTURE].get("recolte_humide")
-    return J_GERM + L + 2 + (rh["fin"] + 1 if rh else 0)
+    attente = CULTURES[CULTURE].get("reprise", (0, J_GERM, 0))[1]
+    return attente + L + 2 + (rh["fin"] + 1 if rh else 0)
 
 
 def kc_riz(j, L):
@@ -150,7 +155,9 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
     """
     W = W_semis.copy()
     shp = W.shape[1:]
-    germ = np.full(shp, -1, int) if CULTURES[CULTURE].get("germination", True) else np.zeros(shp, int)
+    mode_germ = CULTURES[CULTURE].get("germination", True)
+    germ = np.full(shp, -1, int) if mode_germ else np.zeros(shp, int)
+    rep0, rep1, rep_seuil = CULTURES[CULTURE].get("reprise", (0, J_GERM, 0.6))
     lev0, lev1 = CULTURES[CULTURE].get("fen_levee", (0, J_LEVEE))
     avec_chaleur = CULTURES[CULTURE].get("chaleur", True)
     run = np.zeros(shp, int)
@@ -169,7 +176,10 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
         infiltrer(W, cap, p)
         g = germ >= 0
         # germination : couche 0–10 cm suffisamment humide
-        new = (~g) & (W[0] / cap[0] >= 0.6) & (t <= J_GERM)
+        if mode_germ == "pousses":       # sortie des pousses de la semenceau
+            new = (~g) & ((W[0] + W[1]) / (cap[0] + cap[1]) >= rep_seuil) & (t >= rep0) & (t <= rep1)
+        else:
+            new = (~g) & (W[0] / cap[0] >= 0.6) & (t <= J_GERM)
         germ = np.where(new, t, germ)
         g = germ >= 0
         j = np.where(g, t - germ, -1)                       # jours depuis la germination

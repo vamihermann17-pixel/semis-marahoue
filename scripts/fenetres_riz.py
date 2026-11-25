@@ -40,12 +40,21 @@ r3 = lambda a: [None if not np.isfinite(x) else round(float(x), 3) for x in np.r
 
 def charger():
     z = np.load(os.path.join(ICI, "donnees_bilan_marahoue.npz"))
-    dates = [dt.date.fromisoformat(d) for d in z["dates"]]
-    pluie = np.nan_to_num(z["pluie"].astype(float), nan=0.0)
+    brut = [dt.date.fromisoformat(d) for d in z["dates"]]
+    # Calendrier journalier complet : les fichiers TAMSAT ont des jours manquants (fin décembre 2022–2024).
+    # Les simulations avancent jour par jour par position, il ne faut donc aucun trou.
+    dates = [brut[0] + dt.timedelta(days=k) for k in range((brut[-1] - brut[0]).days + 1)]
+    pos = np.array([(d - brut[0]).days for d in brut])
+
+    def etaler(a):
+        out = np.full((len(dates),) + a.shape[1:], np.nan)
+        out[pos] = a
+        return out
+    pluie = np.nan_to_num(etaler(z["pluie"].astype(float)), nan=0.0)   # jours manquants : saison sèche, pluie nulle
     doy = np.array([min(d.timetuple().tm_yday, 365) for d in dates])
 
     def combler(a):
-        a = a.astype(float).copy()
+        a = etaler(a.astype(float))
         clim = np.array([np.nanmean(a[doy == k], axis=0) for k in range(1, 366)])
         m = np.isnan(a)
         a[m] = clim[doy - 1][m]
@@ -54,7 +63,9 @@ def charger():
 
 
 def dates_semis(annee):
-    d0, d1 = dt.date(annee, *DEB), dt.date(annee, *FIN)
+    # « annee » = année de la fin de la période ; si elle commence en fin d'année (igname : décembre),
+    # le début tombe l'année précédente.
+    d0, d1 = dt.date(annee - (1 if DEB > FIN else 0), *DEB), dt.date(annee, *FIN)
     jours = [d0 + dt.timedelta(days=k) for k in range((d1 - d0).days + 1)]
     return [d for d in jours if (d.month, d.day) != (2, 29)]      # même nombre de dates chaque année
 
@@ -78,7 +89,7 @@ def faux_departs(pluie, dates, annees):
 
 def calendrier(dates, pluie, et0, tmax, cap, etats):
     idx = {d: i for i, d in enumerate(dates)}
-    annees = list(range(AN_MIN, AN_MAX + 1))
+    annees = list(range(AN_MIN + (1 if DEB > FIN else 0), AN_MAX + 1))   # pas de données avant janvier 2005
     res = {}
     for L in CYCLES:
         J = B.duree_forcage(L)
