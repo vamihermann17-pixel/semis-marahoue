@@ -7,27 +7,27 @@
  "cycle": 110,
  "scores": {
   "climatologie": {
-   "brier": 0.125,
+   "brier": 0.1246,
    "BSS": 0.0,
-   "ROC_AUC": 0.74
+   "ROC_AUC": 0.741
   },
   "parfaite": {
-   "brier": 0.1305,
+   "brier": 0.1301,
    "BSS": -0.044,
-   "ROC_AUC": 0.716
+   "ROC_AUC": 0.717
   },
   "très bonne (70 %)": {
-   "brier": 0.1235,
+   "brier": 0.1231,
    "BSS": 0.012,
    "ROC_AUC": 0.744
   },
   "réaliste (50 %)": {
-   "brier": 0.123,
+   "brier": 0.1226,
    "BSS": 0.016,
    "ROC_AUC": 0.746
   },
   "sans qualité": {
-   "brier": 0.1264,
+   "brier": 0.126,
    "BSS": -0.011,
    "ROC_AUC": 0.734
   }

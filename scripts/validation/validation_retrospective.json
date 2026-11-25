@@ -6,51 +6,51 @@
  ],
  "resultats": {
   "01/12": {
-   "brier": 0.1254,
-   "brier_climatologie": 0.1253,
-   "BSS": -0.001,
+   "brier": 0.125,
+   "brier_climatologie": 0.1249,
+   "BSS": -0.0,
    "ROC_AUC": 0.736,
    "ROC_AUC_climatologie": 0.737,
    "fiabilite": [
     {
      "classe": "0%–50%",
-     "n": 5412,
-     "prevu": 0.411,
-     "observe": 0.499
+     "n": 5655,
+     "prevu": 0.41,
+     "observe": 0.503
     },
     {
      "classe": "50%–70%",
-     "n": 16644,
+     "n": 16384,
      "prevu": 0.627,
-     "observe": 0.696
+     "observe": 0.698
     },
     {
      "classe": "70%–80%",
-     "n": 18471,
+     "n": 18045,
      "prevu": 0.765,
-     "observe": 0.764
+     "observe": 0.762
     },
     {
      "classe": "80%–90%",
-     "n": 27903,
-     "prevu": 0.871,
-     "observe": 0.863
+     "n": 28034,
+     "prevu": 0.872,
+     "observe": 0.867
     },
     {
      "classe": "90%–100%",
-     "n": 41730,
+     "n": 42042,
      "prevu": 0.977,
-     "observe": 0.944
+     "observe": 0.942
     }
    ],
    "n_cas": 110160,
    "frequence_reussite": 0.834
   },
   "01/02": {
-   "brier": 0.1252,
-   "brier_climatologie": 0.1253,
+   "brier": 0.1248,
+   "brier_climatologie": 0.1249,
    "BSS": 0.001,
-   "ROC_AUC": 0.738,
+   "ROC_AUC": 0.739,
    "ROC_AUC_climatologie": 0.737,
    "fiabilite": [
     {
@@ -61,35 +61,35 @@
     },
     {
      "classe": "50%–70%",
-     "n": 13510,
+     "n": 13500,
      "prevu": 0.589,
-     "observe": 0.658
+     "observe": 0.659
     },
     {
      "classe": "70%–80%",
-     "n": 13964,
+     "n": 13906,
      "prevu": 0.726,
      "observe": 0.738
     },
     {
      "classe": "80%–90%",
-     "n": 23075,
+     "n": 22430,
      "prevu": 0.827,
-     "observe": 0.842
+     "observe": 0.839
     },
     {
      "classe": "90%–100%",
-     "n": 54387,
-     "prevu": 0.955,
-     "observe": 0.93
+     "n": 55100,
+     "prevu": 0.954,
+     "observe": 0.931
     }
    ],
    "n_cas": 110160,
    "frequence_reussite": 0.834
   },
   "01/03": {
-   "brier": 0.125,
-   "brier_climatologie": 0.1253,
+   "brier": 0.1246,
+   "brier_climatologie": 0.1249,
    "BSS": 0.003,
    "ROC_AUC": 0.74,
    "ROC_AUC_climatologie": 0.737,
@@ -102,38 +102,38 @@
     },
     {
      "classe": "50%–70%",
-     "n": 13744,
+     "n": 13733,
      "prevu": 0.588,
-     "observe": 0.657
+     "observe": 0.658
     },
     {
      "classe": "70%–80%",
-     "n": 13774,
+     "n": 13687,
      "prevu": 0.726,
-     "observe": 0.741
+     "observe": 0.74
     },
     {
      "classe": "80%–90%",
-     "n": 23032,
-     "prevu": 0.828,
-     "observe": 0.844
+     "n": 22433,
+     "prevu": 0.827,
+     "observe": 0.842
     },
     {
      "classe": "90%–100%",
-     "n": 54361,
+     "n": 55058,
      "prevu": 0.955,
-     "observe": 0.93
+     "observe": 0.931
     }
    ],
    "n_cas": 110160,
    "frequence_reussite": 0.834
   },
   "01/04": {
-   "brier": 0.1353,
-   "brier_climatologie": 0.1353,
+   "brier": 0.1348,
+   "brier_climatologie": 0.1348,
    "BSS": 0.0,
    "ROC_AUC": 0.724,
-   "ROC_AUC_climatologie": 0.722,
+   "ROC_AUC_climatologie": 0.723,
    "fiabilite": [
     {
      "classe": "0%–50%",
@@ -143,38 +143,38 @@
     },
     {
      "classe": "50%–70%",
-     "n": 12255,
+     "n": 12243,
      "prevu": 0.588,
-     "observe": 0.661
+     "observe": 0.662
     },
     {
      "classe": "70%–80%",
-     "n": 11998,
+     "n": 11912,
      "prevu": 0.725,
-     "observe": 0.738
+     "observe": 0.736
     },
     {
      "classe": "80%–90%",
-     "n": 19722,
+     "n": 19135,
      "prevu": 0.827,
-     "observe": 0.845
+     "observe": 0.842
     },
     {
      "classe": "90%–100%",
-     "n": 38915,
-     "prevu": 0.949,
-     "observe": 0.921
+     "n": 39600,
+     "prevu": 0.948,
+     "observe": 0.922
     }
    ],
    "n_cas": 87840,
    "frequence_reussite": 0.819
   },
   "01/05": {
-   "brier": 0.1647,
-   "brier_climatologie": 0.1649,
-   "BSS": 0.001,
-   "ROC_AUC": 0.677,
-   "ROC_AUC_climatologie": 0.672,
+   "brier": 0.1641,
+   "brier_climatologie": 0.1643,
+   "BSS": 0.002,
+   "ROC_AUC": 0.678,
+   "ROC_AUC_climatologie": 0.674,
    "fiabilite": [
     {
      "classe": "0%–50%",
@@ -184,31 +184,31 @@
     },
     {
      "classe": "50%–70%",
-     "n": 12289,
+     "n": 12278,
      "prevu": 0.588,
-     "observe": 0.662
+     "observe": 0.663
     },
     {
      "classe": "70%–80%",
-     "n": 11570,
+     "n": 11485,
      "prevu": 0.725,
-     "observe": 0.731
+     "observe": 0.729
     },
     {
      "classe": "80%–90%",
-     "n": 17290,
-     "prevu": 0.827,
-     "observe": 0.837
+     "n": 16736,
+     "prevu": 0.826,
+     "observe": 0.835
     },
     {
      "classe": "90%–100%",
-     "n": 20151,
-     "prevu": 0.934,
-     "observe": 0.882
+     "n": 20801,
+     "prevu": 0.933,
+     "observe": 0.886
     }
    ],
    "n_cas": 66240,
-   "frequence_reussite": 0.775
+   "frequence_reussite": 0.776
   }
  }
 }

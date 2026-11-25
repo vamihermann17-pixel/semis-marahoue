@@ -11,37 +11,37 @@
  },
  "scores": {
   "réussite – climatologie (A)": {
-   "brier": 0.1955,
-   "ROC_AUC": 0.75,
+   "brier": 0.1917,
+   "ROC_AUC": 0.752,
    "n": 10980,
-   "frequence": 0.698
+   "frequence": 0.704
   },
   "réussite – ECMWF brut (B)": {
-   "brier": 0.2194,
-   "ROC_AUC": 0.669,
+   "brier": 0.2151,
+   "ROC_AUC": 0.671,
    "n": 10980,
-   "frequence": 0.698,
+   "frequence": 0.704,
    "BSS_vs_climatologie": -0.122
   },
   "réussite – ECMWF corrigé (B')": {
-   "brier": 0.2189,
-   "ROC_AUC": 0.681,
+   "brier": 0.2144,
+   "ROC_AUC": 0.684,
    "n": 10980,
-   "frequence": 0.698,
-   "BSS_vs_climatologie": -0.12
+   "frequence": 0.704,
+   "BSS_vs_climatologie": -0.118
   },
   "levée – climatologie (A)": {
-   "brier": 0.0466,
-   "ROC_AUC": 0.875,
+   "brier": 0.0439,
+   "ROC_AUC": 0.867,
    "n": 10980,
-   "frequence": 0.941
+   "frequence": 0.946
   },
   "levée – ECMWF brut (B)": {
-   "brier": 0.0695,
-   "ROC_AUC": 0.546,
+   "brier": 0.0658,
+   "ROC_AUC": 0.538,
    "n": 10980,
-   "frequence": 0.941,
-   "BSS_vs_climatologie": -0.491
+   "frequence": 0.946,
+   "BSS_vs_climatologie": -0.5
   }
  }
 }

@@ -1,6 +1,7 @@
 # Validation du bilan hydrique du riz pluvial — Marahoué
 
-État au 24 novembre 2026. Scripts : `scripts/validation_retrospective.py`, `scripts/validation_ndvi.py`, `scripts/validation_meteo10j.py`.
+État au 25 novembre 2026 (recalculé avec le calendrier journalier complet : les fichiers TAMSAT
+n'ont pas les derniers jours de décembre 2022–2024 ; résultats inchangés à la troisième décimale près). Scripts : `scripts/validation_retrospective.py`, `scripts/validation_ndvi.py`, `scripts/validation_meteo10j.py`.
 
 ## 1. Test de prévision rétrospectif (2006–2025)
 
@@ -11,11 +12,11 @@ Pour chaque saison, on refait la prévision telle qu'elle aurait été émise le
 
 | Émission | Gain sur la climatologie (BSS) | Aire ROC prévision | Aire ROC climatologie |
 |---|---|---|---|
-| 1er décembre | −0,001 | 0,736 | 0,737 |
-| 1er février | +0,001 | 0,738 | 0,737 |
+| 1er décembre | 0,000 | 0,736 | 0,737 |
+| 1er février | +0,001 | 0,739 | 0,737 |
 | 1er mars | +0,003 | 0,740 | 0,737 |
-| 1er avril | 0,000 | 0,724 | 0,722 |
-| 1er mai | +0,001 | 0,677 | 0,672 |
+| 1er avril | 0,000 | 0,724 | 0,723 |
+| 1er mai | +0,002 | 0,678 | 0,674 |
 
 **Conclusion.** L'état du sol au moment de l'émission n'apporte pas d'information utile au-delà de la
 climatologie : la réserve de 0–60 cm (environ 70 mm) se vide ou se remplit en quelques semaines.
@@ -53,11 +54,11 @@ scénarios est remplacée par la prévision ECMWF émise le jour du semis. Scrip
 
 | Prévision | Score de Brier | Aire ROC | Gain sur la climatologie |
 |---|---|---|---|
-| Réussite, climatologie (prévision actuelle) | 0,196 | 0,750 | — |
-| Réussite, avec ECMWF brut | 0,219 | 0,669 | −12 % |
-| Réussite, avec ECMWF corrigé du biais | 0,219 | 0,681 | −12 % |
-| Levée, climatologie | 0,047 | 0,875 | — |
-| Levée, avec ECMWF brut | 0,070 | 0,546 | −49 % |
+| Réussite, climatologie (prévision actuelle) | 0,192 | 0,752 | — |
+| Réussite, avec ECMWF brut | 0,215 | 0,671 | −12 % |
+| Réussite, avec ECMWF corrigé du biais | 0,214 | 0,684 | −12 % |
+| Levée, climatologie | 0,044 | 0,867 | — |
+| Levée, avec ECMWF brut | 0,066 | 0,538 | −50 % |
 
 Pluie cumulée prévue contre pluie TAMSAT, corrélation de rang : 0,31 (J0–J1), 0,18 (J0–J3),
 0,08 (J0–J7) à la maille ; ECMWF sous-estime la pluie de mars–juillet de 20 à 25 %.
@@ -92,8 +93,8 @@ pluie de zone dans cette fenêtre (terciles sans la saison prévue). Émission a
 
 | Prévision des terciles | Gain sur la climatologie (Brier) | Aire ROC |
 |---|---|---|
-| Climatologie (poids égaux) | — | 0,740 |
-| Parfaite (100 % sur le tercile observé) | −4,4 % | 0,716 |
+| Climatologie (poids égaux) | — | 0,741 |
+| Parfaite (100 % sur le tercile observé) | −4,4 % | 0,717 |
 | Très bonne (70 % sur le bon tercile) | +1,2 % | 0,744 |
 | Réaliste (50 % sur le bon tercile) | +1,6 % | 0,746 |
 | Sans qualité (50 % sur un tercile au hasard) | −1,1 % | 0,734 |
