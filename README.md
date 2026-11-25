@@ -1,4 +1,4 @@
-# Fenêtres de semis du riz et du maïs pluviaux — Marahoué (Côte d'Ivoire)
+# Fenêtres de semis du riz, du maïs et de l'arachide — Marahoué (Côte d'Ivoire)
 
 Page web : https://vamihermann17-pixel.github.io/semis-marahoue/
 
@@ -8,6 +8,10 @@ journalier propre à chaque culture** (`CULTURE=riz` ou `CULTURE=mais`).
 
 Maïs (FAO-56) : 0–100 cm, Kc 0,4 → 1,2 → 0,5, racines de 10 à 100 cm, p = 0,55 ; échec si Ks < 0,7
 3 jours de suite à la levée ou autour de la sortie des soies (55 % du cycle, −7 à +14 j).
+
+Arachide (FAO-56) : 0–100 cm, Kc 0,4 → 1,15 → 0,6, racines de 10 à 80 cm, p = 0,50, cycles 90/105/120 j ;
+échec si Ks < 0,5 5 jours de suite à la levée ou pendant floraison et gousses (45 % du cycle, −10 à +20 j),
+ou si plus de 80 mm de pluie tombent dans les 15 jours autour de la maturité (récolte sous la pluie).
 
 ## Méthode
 - `scripts/bilan_riz.py` : bilan hydrique FAO-56 sur 0–60 cm (3 couches). Kc du riz 0,5 → 1,15 → 0,8,

@@ -80,7 +80,7 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
     annees = list(range(AN_MIN, AN_MAX + 1))
     res = {}
     for L in CYCLES:
-        J = B.J_GERM + L + 2
+        J = B.duree_forcage(L)
         succ, causes, wrsi, r3, r10 = [], [], [], [], []
         for y in annees:
             sd = dates_semis(y)
@@ -95,7 +95,8 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
         p = succ.mean(axis=(0, 2, 3))
         n = causes.size
         res[L] = {"reussite": p, "wrsi_med": np.median(wrsi, axis=(0, 2, 3)),
-                  "causes": {B.CAUSES[c]: f"{(causes == c).sum() / n:.0%}" for c in B.CAUSES},
+                  "causes": {B.CAUSES[c]: f"{(causes == c).sum() / n:.0%}" for c in B.CAUSES
+                             if c != 6 or "recolte_humide" in PARAM},
                   "succ_annee": succ.mean(axis=(2, 3)),
                   "reussite_regle": np.array([succ[:, k][regle[:, k]].mean() if regle[:, k].sum() >= 20 else np.nan
                                               for k in range(succ.shape[1])]),
@@ -116,7 +117,7 @@ def prevision(dates, pluie, et0, tmax, cap, etats):
     W_now = etats[-1]
     saison = emis.year if (emis.month, emis.day) <= FIN else emis.year + 1
     sd = [d for d in dates_semis(saison) if d >= emis]
-    fin = sd[-1] + dt.timedelta(days=B.J_GERM + max(CYCLES) + 3)
+    fin = sd[-1] + dt.timedelta(days=B.duree_forcage(max(CYCLES)) + 1)
     H = (fin - emis).days
     # scénario « année de saison Y » : la météo reprend au même jour calendaire, Y − (saison − émission) ans plus tôt
     decal = saison - emis.year
@@ -151,7 +152,7 @@ def prevision(dates, pluie, et0, tmax, cap, etats):
                              "jours": [str(d) for d in dates[-10:]], "zone_mm_jour": r3(pluie[-10:].mean(axis=(1, 2)))},
            "jours_eval": [str(d) for d in sd], "lat": r3(LAT), "lon": r3(LON), "cycles": {}}
     for L in CYCLES:
-        J = B.J_GERM + L + 2
+        J = B.duree_forcage(L)
         sel = k_sd[:, None] + np.arange(J)[None, :]                           # (n, J)
         g = lambda a: np.moveaxis(a[:, sel], [0, 1, 2], [2, 1, 0])            # (J, n, S, lat, lon)
         r = B.simuler_semis(W0, cap[:, None, None], g(P), g(E), g(T), L)

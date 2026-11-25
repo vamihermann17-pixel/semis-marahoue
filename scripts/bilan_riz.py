@@ -41,6 +41,13 @@ CULTURES = {
              "p": 0.55, "flo": lambda L: round(0.55 * L), "fen_flo": (-7, 14),
              # floraison femelle très sensible (Ky = 1,5, FAO-33) : un stress modéré suffit
              "ks_fort": 0.7, "jours_stress": 3},
+    # Arachide : FAO-56 (Kc 0,40 / 1,15 / 0,60, racines 0,5–1,0 m, p = 0,50). Phase la plus sensible :
+    # floraison, mise en place des gynophores et début de formation des gousses (≈ 45 % du cycle).
+    "arachide": {"nom": "arachide", "cycles": (90, 105, 120), "ep": (100.0, 200.0, 300.0, 400.0),
+                 "kc": ((0, .19, .46, .81, 1.0), (0.4, 0.4, 1.15, 1.15, 0.6)), "racines": (100.0, 800.0, 0.5),
+                 "p": 0.50, "flo": lambda L: round(0.45 * L), "fen_flo": (-10, 20),
+                 # récolte sous la pluie : gousses qui ne sèchent pas, pourriture, aflatoxines
+                 "recolte_humide": {"debut": -5, "fin": 10, "mm": 80.0}},
 }
 CULTURE = "riz"
 EP = np.array(CULTURES["riz"]["ep"])          # épaisseur des couches (mm)
@@ -105,6 +112,12 @@ def simuler_jachere(pluie, et0, cap, W0=None):
     return out
 
 
+def duree_forcage(L):
+    """Nombre de jours de forçage à fournir à simuler_semis pour un cycle de L jours."""
+    rh = CULTURES[CULTURE].get("recolte_humide")
+    return J_GERM + L + 2 + (rh["fin"] + 1 if rh else 0)
+
+
 def kc_riz(j, L):
     """Kc FAO-56 de la culture choisie ; j : tableau de jours depuis la germination."""
     fr, val = CULTURES[CULTURE]["kc"]
@@ -131,6 +144,8 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
     lev_ko = np.zeros(shp, bool); flo_ko = np.zeros(shp, bool); chaleur = np.zeros(shp, int)
     sum_eta = np.zeros(shp); sum_etc = np.zeros(shp)
     flo = CULTURES[CULTURE]["flo"](L)
+    rh = CULTURES[CULTURE].get("recolte_humide")
+    pluie_rec = np.zeros(shp)
     ks_fort = CULTURES[CULTURE].get("ks_fort", KS_FORT)
     run_stress = CULTURES[CULTURE].get("jours_stress", RUN_STRESS)
     f0, f1 = CULTURES[CULTURE]["fen_flo"]
@@ -148,6 +163,9 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
         es = np.where(~g, np.minimum(et0_f[t] * np.clip(W[0] / cap[0] / 0.6, 0, 1), W[0]), 0)
         W[0] -= es
         # culture
+        if rh is not None:
+            jr = np.where(germ >= 0, t - germ, -999)
+            pluie_rec += np.where((jr >= L + rh["debut"]) & (jr <= L + rh["fin"]), p, 0)
         if g.any():
             jj = np.clip(j, 0, L)
             kc = kc_riz(jj, L)
@@ -172,6 +190,8 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
             chaleur += (actif & (abs(j - flo) <= 5) & (tx >= TMAX_CRIT)).astype(int)
     wrsi = np.where(sum_etc > 0, 100 * sum_eta / np.maximum(sum_etc, 1e-9), 0)
     cause = np.zeros(shp, int)
+    if rh is not None:
+        cause = np.where(pluie_rec >= rh["mm"], 6, cause)
     cause = np.where(wrsi < WRSI_MIN, 5, cause)
     cause = np.where(chaleur >= 3, 4, cause)
     cause = np.where(flo_ko, 3, cause)
@@ -181,4 +201,4 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
 
 
 CAUSES = {1: "pas de germination", 2: "levée", 3: "floraison (sécheresse)",
-          4: "floraison (chaleur)", 5: "eau insuffisante sur le cycle"}
+          4: "floraison (chaleur)", 5: "eau insuffisante sur le cycle", 6: "récolte sous la pluie"}

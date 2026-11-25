@@ -45,6 +45,7 @@ jobs:
           done
           python fenetres_riz.py
           CULTURE=mais python fenetres_riz.py
+          CULTURE=arachide python fenetres_riz.py
 
       - name: Enregistrer les nouvelles données
         if: github.event_name != 'push' && steps.calcul.outcome == 'success'
