@@ -44,6 +44,7 @@ jobs:
             echo "Échec de l'essai $essai, nouvel essai dans 120 s"; sleep 120
           done
           python fenetres_riz.py
+          CULTURE=mais python fenetres_riz.py
 
       - name: Enregistrer les nouvelles données
         if: github.event_name != 'push' && steps.calcul.outcome == 'success'

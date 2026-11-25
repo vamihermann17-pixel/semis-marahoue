@@ -28,10 +28,35 @@ import os
 
 import numpy as np
 
-EP = np.array([100.0, 200.0, 300.0])          # épaisseur des couches (mm)
+# Paramètres par culture (FAO-56, Allen et al. 1998, tableaux 12, 17 et 22).
+#   ep : épaisseur des couches de sol (mm) ; kc : (fractions du cycle, valeurs) ; racines : (min, max mm,
+#   fraction du cycle où le maximum est atteint) ; p : fraction de l'eau utile consommée sans stress ;
+#   flo : jour de floraison (fonction du cycle L) ; fen_flo : fenêtre sensible autour de la floraison.
+CULTURES = {
+    "riz": {"nom": "riz pluvial", "cycles": (100, 110, 120), "ep": (100.0, 200.0, 300.0),
+            "kc": ((0, .15, .40, .80, 1.0), (0.5, 0.5, 1.15, 1.15, 0.8)), "racines": (100.0, 600.0, 0.5),
+            "p": 0.20, "flo": lambda L: L - 35, "fen_flo": (-14, 7)},
+    "mais": {"nom": "maïs pluvial", "cycles": (90, 105, 120), "ep": (100.0, 200.0, 300.0, 400.0),
+             "kc": ((0, .16, .44, .76, 1.0), (0.4, 0.4, 1.20, 1.20, 0.5)), "racines": (100.0, 1000.0, 0.5),
+             "p": 0.55, "flo": lambda L: round(0.55 * L), "fen_flo": (-7, 14),
+             # floraison femelle très sensible (Ky = 1,5, FAO-33) : un stress modéré suffit
+             "ks_fort": 0.7, "jours_stress": 3},
+}
+CULTURE = "riz"
+EP = np.array(CULTURES["riz"]["ep"])          # épaisseur des couches (mm)
 Z_TOP = np.cumsum(EP) - EP                    # profondeur du haut de chaque couche (mm)
 P_RIZ = float(os.environ.get("P_RIZ", 0.20))
 WRSI_MIN = float(os.environ.get("WRSI_MIN", 75))
+
+
+def choisir_culture(nom):
+    """Règle les paramètres du module pour une culture (« riz » par défaut, « mais »)."""
+    global CULTURE, EP, Z_TOP, P_RIZ
+    c = CULTURES[nom]
+    CULTURE = nom
+    EP = np.array(c["ep"]); Z_TOP = np.cumsum(EP) - EP
+    P_RIZ = float(os.environ.get("P_RIZ", c["p"])) if nom == "riz" else c["p"]
+    return c
 KC_JACHERE = 0.30
 J_GERM = 10            # jours laissés à la germination
 J_LEVEE = 20           # jours de suivi de la levée après germination
@@ -48,7 +73,7 @@ def capacites(ru_mm_m):
 def infiltrer(W, cap, pluie):
     """Ruissellement des fortes pluies puis remplissage de haut en bas (in-place)."""
     p = pluie - 0.15 * np.maximum(pluie - 25.0, 0)
-    for k in range(3):
+    for k in range(len(EP)):
         add = np.minimum(p, cap[k] - W[k])
         W[k] += add
         p = p - add
@@ -62,9 +87,10 @@ def pas_jachere(W, cap, pluie, et0):
     W[0] -= es
     tot = W.sum(0); captot = cap.sum(0)
     ks = np.clip(tot / (0.5 * captot), 0, 1)
-    tr = np.minimum(KC_JACHERE * et0 * ks, np.maximum(W[1] + W[2], 0))
-    part2 = np.where(W[1] + W[2] > 0, W[1] / np.maximum(W[1] + W[2], 1e-9), 0.5)
-    W[1] -= tr * part2; W[2] -= tr * (1 - part2)
+    prof = W[1:].sum(0)
+    tr = np.minimum(KC_JACHERE * et0 * ks, np.maximum(prof, 0))
+    for k in range(1, len(EP)):
+        W[k] -= tr * np.where(prof > 0, W[k] / np.maximum(prof, 1e-9), 0)
     np.maximum(W, 0, out=W)
     return W
 
@@ -80,13 +106,14 @@ def simuler_jachere(pluie, et0, cap, W0=None):
 
 
 def kc_riz(j, L):
-    """Kc FAO-56 du riz pluvial ; j : tableau de jours depuis la germination."""
-    l1, l2, l3 = 0.15 * L, 0.40 * L, 0.80 * L
-    return np.interp(j, [0, l1, l2, l3, L], [0.5, 0.5, 1.15, 1.15, 0.8])
+    """Kc FAO-56 de la culture choisie ; j : tableau de jours depuis la germination."""
+    fr, val = CULTURES[CULTURE]["kc"]
+    return np.interp(j, [f * L for f in fr], val)
 
 
 def racines(j, L):
-    return 100.0 + (600.0 - 100.0) * np.clip(j / (0.5 * L), 0, 1)     # mm
+    z0, z1, f = CULTURES[CULTURE]["racines"]
+    return z0 + (z1 - z0) * np.clip(j / (f * L), 0, 1)     # mm
 
 
 def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
@@ -103,7 +130,10 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
     run = np.zeros(shp, int)
     lev_ko = np.zeros(shp, bool); flo_ko = np.zeros(shp, bool); chaleur = np.zeros(shp, int)
     sum_eta = np.zeros(shp); sum_etc = np.zeros(shp)
-    flo = L - 35
+    flo = CULTURES[CULTURE]["flo"](L)
+    ks_fort = CULTURES[CULTURE].get("ks_fort", KS_FORT)
+    run_stress = CULTURES[CULTURE].get("jours_stress", RUN_STRESS)
+    f0, f1 = CULTURES[CULTURE]["fen_flo"]
     J = pluie_f.shape[0]
     for t in range(J):
         p, e0, tx = pluie_f[t], et0_f[t], tmax_f[t]
@@ -122,7 +152,7 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
             jj = np.clip(j, 0, L)
             kc = kc_riz(jj, L)
             zr = racines(jj, L)
-            frac = np.stack([np.clip((zr - Z_TOP[k]) / EP[k], 0, 1) for k in range(3)])
+            frac = np.stack([np.clip((zr - Z_TOP[k]) / EP[k], 0, 1) for k in range(len(EP))])
             taw = (frac * cap).sum(0)
             wr = (frac * W).sum(0)
             dr = taw - wr
@@ -135,10 +165,10 @@ def simuler_semis(W_semis, cap, pluie_f, et0_f, tmax_f, L):
             W -= np.where(actif[None], share * eta[None], 0)
             np.maximum(W, 0, out=W)
             sum_eta += np.where(actif, eta, 0); sum_etc += np.where(actif, etc, 0)
-            fort = actif & (ks < KS_FORT)
+            fort = actif & (ks < ks_fort)
             run = np.where(fort, run + 1, 0)
-            lev_ko |= (run >= RUN_STRESS) & (j <= J_LEVEE)
-            flo_ko |= (run >= RUN_STRESS) & (j >= flo - 14) & (j <= flo + 7)
+            lev_ko |= (run >= run_stress) & (j <= J_LEVEE)
+            flo_ko |= (run >= run_stress) & (j >= flo + f0) & (j <= flo + f1)
             chaleur += (actif & (abs(j - flo) <= 5) & (tx >= TMAX_CRIT)).astype(int)
     wrsi = np.where(sum_etc > 0, 100 * sum_eta / np.maximum(sum_etc, 1e-9), 0)
     cause = np.zeros(shp, int)

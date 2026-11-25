@@ -83,19 +83,22 @@ td{font-variant-numeric:tabular-nums}
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Riz pluvial · Marahoué, Côte d'Ivoire · bilan hydrique FAO-56</span>
-    <h1>Fenêtres de semis du riz pluvial</h1>
-    <p class="sub">Probabilité qu'un semis réussisse, calculée avec un bilan hydrique du riz pluvial sur 20 saisons (2005–2024) et à partir de l'état du sol d'aujourd'hui. Choisissez la durée de cycle de votre variété et le niveau de risque accepté.</p>
+    <span class="eyebrow">Marahoué, Côte d'Ivoire · bilan hydrique FAO-56 · riz et maïs pluviaux</span>
+    <h1 id="titre">Fenêtres de semis du riz pluvial</h1>
+    <p class="sub">Probabilité qu'un semis réussisse, calculée avec un bilan hydrique propre à chaque culture sur 20 saisons (2005–2024) et à partir de l'état du sol d'aujourd'hui. Choisissez la culture, la durée de cycle de votre variété et le niveau de risque accepté.</p>
   </header>
 
   <div class="controls" role="group" aria-label="Réglages">
     <div class="ctl">
-      <span class="eyebrow">Cycle de la variété</span>
-      <div class="seg" id="cycleSeg">
-        <button type="button" data-c="100" aria-pressed="false">100 j</button>
-        <button type="button" data-c="110" aria-pressed="true">110 j</button>
-        <button type="button" data-c="120" aria-pressed="false">120 j</button>
+      <span class="eyebrow">Culture</span>
+      <div class="seg" id="cultSeg">
+        <button type="button" data-k="riz" aria-pressed="true">Riz</button>
+        <button type="button" data-k="mais" aria-pressed="false">Maïs</button>
       </div>
+    </div>
+    <div class="ctl">
+      <span class="eyebrow">Cycle de la variété</span>
+      <div class="seg" id="cycleSeg"></div>
     </div>
     <div class="ctl">
       <label class="eyebrow" for="pSeuil">Probabilité minimale pour semer : <span class="num" id="pVal">80 %</span></label>
@@ -150,7 +153,7 @@ td{font-variant-numeric:tabular-nums}
   <section class="panel" id="pCal">
     <div class="panel-head">
       <div><span class="eyebrow">Calendrier historique</span><h2>Réussite selon la date de semis</h2></div>
-      <p class="muted">Part des saisons 2005–2024 où un semis à cette date réussit d'après le bilan hydrique du riz. Les bandes vertes marquent les dates où la réussite dépasse votre seuil. Faux départ = pluie de démarrage (≥ 20 mm en 3 jours) suivie de plus de 7 jours secs dans le mois.</p>
+      <p class="muted">Part des saisons 2005–2024 où un semis à cette date réussit d'après le bilan hydrique de la culture. Les bandes vertes marquent les dates où la réussite dépasse votre seuil. Faux départ = pluie de démarrage (≥ 20 mm en 3 jours) suivie de plus de 7 jours secs dans le mois.</p>
     </div>
     <div class="chart" id="calChart"></div>
     <div class="legend" id="calLegend"></div>
@@ -158,7 +161,7 @@ td{font-variant-numeric:tabular-nums}
 
   <section class="panel" id="validation">
     <div class="panel-head">
-      <div><span class="eyebrow">Validation · novembre 2026</span><h2>Ce que valent ces probabilités</h2></div>
+      <div><span class="eyebrow">Validation · novembre 2026 · tests faits pour le riz</span><h2>Ce que valent ces probabilités</h2></div>
       <p class="muted">Deux tests indépendants sur 2005–2025. Détails et protocole de terrain : <a href="https://github.com/vamihermann17-pixel/semis-marahoue/blob/main/VALIDATION.md">VALIDATION.md</a>.</p>
     </div>
     <div class="two">
@@ -197,13 +200,14 @@ td{font-variant-numeric:tabular-nums}
         <li>Le jour venu, semez après une bonne pluie (≥ 20 mm en 3 jours ou ≥ 40 mm en 10 jours) : en mars, les échecs de levée passent de 6 % à 2 %. La colonne « Après une bonne pluie » donne la réussite quand on suit cette règle.</li>
       </ol></div>
       <div><h3>Méthode</h3><ul>
-        <li>Bilan hydrique journalier du riz pluvial (FAO-56) sur 0–60 cm : Kc 0,5 → 1,15 → 0,8, racines de 10 à 60 cm, stress dès que 20 % de l'eau utile des racines est consommée.</li>
-        <li>Réussite : germination dans les 10 jours, pas de stress fort 5 jours de suite à la levée ni à la floraison (cycle − 35 j), moins de 3 jours à plus de 35 °C à la floraison, et WRSI ≥ <span id="mW"></span>.</li>
+        <li data-k="riz">Riz (FAO-56) sur 0–60 cm : Kc 0,5 → 1,15 → 0,8, racines de 10 à 60 cm, stress dès que 20 % de l'eau utile des racines est consommée. Réussite : germination dans les 10 jours, pas de stress fort (Ks &lt; 0,5) 5 jours de suite à la levée ni autour de la floraison (cycle − 35 j), moins de 3 jours à plus de 35 °C à la floraison, WRSI ≥ <span class="mW"></span>.</li>
+        <li data-k="mais" hidden>Maïs (FAO-56) sur 0–100 cm : Kc 0,4 → 1,2 → 0,5, racines de 10 à 100 cm, stress dès que 55 % de l'eau utile des racines est consommée. Réussite : germination dans les 10 jours, pas de stress modéré (Ks &lt; 0,7) 3 jours de suite à la levée ni autour de la sortie des soies (55 % du cycle, de −7 à +14 j), moins de 3 jours à plus de 35 °C à la floraison, WRSI ≥ <span class="mW"></span>.</li>
         <li>Prévision : état du sol d'aujourd'hui (pluies TAMSAT observées), puis météo de chaque saison passée : un scénario par année (méthode TAMSAT-ALERT).</li>
         <li>Pluie TAMSAT v3.2 ; ET0 Penman-Monteith et Tmax NASA POWER ; réserve utile SoilGrids (Saxton et Rawls), en moyenne <span id="mR"></span> mm/m.</li>
       </ul></div>
       <div><h3>Limites</h3><ul>
-        <li>Paramètres du riz tirés de la littérature (FAO-56, NERICA), non encore calés au champ.</li>
+        <li>Paramètres tirés de la littérature (FAO-56 ; NERICA pour le riz), non encore calés au champ.</li>
+        <li data-k="mais" hidden>Maïs : sur sols gravillonnaires où les racines s'arrêtent vers 60 cm, la réussite des semis de mai–juin tombe de 80–90 % à 50–60 %.</li>
         <li>Mailles de 28 km : un seul sol et une seule pluie par maille, sans les bas-fonds.</li>
         <li>Ni l'état du sol, ni la météo à 10 jours, ni les prévisions saisonnières ne battent la climatologie : les probabilités sont celles de chaque date de semis.</li>
         <li>Météo NASA POWER à 0,5° ; le stress thermique et le ruissellement sont simplifiés.</li>
@@ -221,8 +225,9 @@ const NS="http://www.w3.org/2000/svg";
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 const MOISL=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
-const st={cycle:"110",p:0.80,mapMode:"first",mapDay:0};
-try{const s=JSON.parse(localStorage.getItem("semisRiz2")||"{}");if(s.cycle)st.cycle=s.cycle;if(s.p)st.p=s.p;}catch(e){}
+const CYC0={riz:"110",mais:"105"};
+const st={culture:"riz",cycle:"110",p:0.80,mapMode:"first",mapDay:0};
+try{const s=JSON.parse(localStorage.getItem("semisRiz2")||"{}");if(s.culture&&CYC0[s.culture])st.culture=s.culture;st.cycle=s.cycle||CYC0[st.culture];if(s.p)st.p=s.p;}catch(e){}
 let CAL=null,FC=null;
 const tip=$("#tip");
 function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-250);tip.style.left=x+"px";tip.style.top=(e.clientY+14)+"px";}
@@ -235,7 +240,7 @@ const pct=v=>v==null?"–":Math.round(v*100)+" %";
 function q(arr,p){const a=arr.filter(v=>v!=null).sort((x,y)=>x-y);if(!a.length)return null;const i=(a.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return a[lo]+(a[hi]-a[lo])*(i-lo);}
 function smooth(a,w){return a.map((_,i)=>{let s=0,n=0;for(let k=i-w;k<=i+w;k++){if(k>=0&&k<a.length&&a[k]!=null&&!isNaN(a[k])){s+=a[k];n++;}}return n?s/n:null;});}
 function plages(ok){const r=[];let a=-1;ok.forEach((v,i)=>{if(v&&a<0)a=i;if(!v&&a>=0){r.push([a,i-1]);a=-1;}});if(a>=0)r.push([a,ok.length-1]);return r;}
-function save(){try{localStorage.setItem("semisRiz2",JSON.stringify({cycle:st.cycle,p:st.p}));}catch(e){}}
+function save(){try{localStorage.setItem("semisRiz2",JSON.stringify({culture:st.culture,cycle:st.cycle,p:st.p}));}catch(e){}}
 
 /* ---------- Verdict ---------- */
 function verdict(){
@@ -314,7 +319,7 @@ function fcChart(){
   je.forEach((s,k)=>{const i=FC.jours.indexOf(s),p=pz[k];if(p==null)return;
     el("rect",{x:x(i)-bw/2,y:y2(p),width:bw,height:y2(0)-y2(p),fill:p>=st.p?paddy:soft},svg);});
   el("line",{x1:L,x2:W-R,y1:y2(st.p),y2:y2(st.p),stroke:lat,"stroke-width":1.4,"stroke-dasharray":"5 3"},svg);
-  lab(`réussite d'un semis ce jour-là (riz ${st.cycle} j)`,T+H1+G-8);
+  lab(`réussite d'un semis ce jour-là (${CAL.culture==='mais'?'maïs':'riz'} ${st.cycle} j)`,T+H1+G-8);
   const cur=el("line",{x1:0,x2:0,y1:T,y2:y2(0),stroke:ink,"stroke-width":1,opacity:0},svg);
   const hit=el("rect",{x:L,y:T,width:W-L-R,height:H1+G+H2,fill:"transparent"},svg);
   hit.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)*W/r.width;
@@ -412,34 +417,47 @@ function monthTable(){
     h+=`<tr><td>${MOISL[+m-1]}</td><td>${pct(r)}<span class="bar" style="width:${Math.round(r*60)}px"></span></td><td>${pct(rr)}</td><td>${w==null?"–":Math.round(w)}</td><td>${pct(f)}</td><td>${ok} / ${ix.length}</td></tr>`;});
   t.innerHTML=h+"</tbody>";
   const cs=c.causes||{},pa=CAL.parametres;
-  $("#calibTxt").innerHTML=`Échecs (part de tous les semis simulés, cycle ${st.cycle} j) : ${Object.entries(cs).map(([k,v])=>`${k} ${v}`).join(", ")}. WRSI = part des besoins en eau du riz couverts sur le cycle (100 = aucun déficit) ; réussite exigée : WRSI ≥ ${pa.WRSI_MIN}.`;
+  $("#calibTxt").innerHTML=`Échecs (part de tous les semis simulés, cycle ${st.cycle} j) : ${Object.entries(cs).map(([k,v])=>`${k} ${v}`).join(", ")}. WRSI = part des besoins en eau de la culture couverts sur le cycle (100 = aucun déficit) ; réussite exigée : WRSI ≥ ${pa.WRSI_MIN}.`;
 }
 
 function renderAll(){
-  document.querySelectorAll("#cycleSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===st.cycle));
+  const cy=(CAL.cycles_disponibles||Object.keys(CAL.cycles)).map(String);
+  if(!cy.includes(st.cycle))st.cycle=cy.includes(CYC0[st.culture])?CYC0[st.culture]:cy[0];
+  $("#cycleSeg").innerHTML=cy.map(c=>`<button type="button" data-c="${c}" aria-pressed="${c===st.cycle}">${c} j</button>`).join("");
+  $("#cycleSeg").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{st.cycle=b.dataset.c;save();renderAll();}));
+  document.querySelectorAll("#cultSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===st.culture));
+  document.querySelectorAll("li[data-k]").forEach(li=>li.hidden=li.dataset.k!==st.culture);
+  $("#titre").textContent=st.culture==="mais"?"Fenêtres de semis du maïs pluvial":"Fenêtres de semis du riz pluvial";
   $("#pSeuil").value=Math.round(st.p*100);$("#pVal").textContent=Math.round(st.p*100)+" %";
   verdict();fcChart();mapDraw();calChart();monthTable();
 }
 
-document.querySelectorAll("#cycleSeg button").forEach(b=>b.addEventListener("click",()=>{st.cycle=b.dataset.c;save();renderAll();}));
+document.querySelectorAll("#cultSeg button").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.k===st.culture)return;st.culture=b.dataset.k;st.cycle=CYC0[st.culture];save();charger();}));
 $("#pSeuil").addEventListener("input",e=>{st.p=+e.target.value/100;save();renderAll();});
 $("#mapMode").addEventListener("change",e=>{st.mapMode=e.target.value;$("#dayCtl").hidden=st.mapMode!=="day";mapDraw();});
 $("#mapDay").addEventListener("input",e=>{st.mapDay=+e.target.value;$("#mapDayVal").textContent=fmt(iso(FC.jours_eval[st.mapDay]));mapDraw();});
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>CAL&&renderAll());
 new MutationObserver(()=>CAL&&renderAll()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 
-Promise.all([
-  fetch("calendriers_riz.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}),
-  fetch("prevision_riz_derniere.json").then(r=>r.ok?r.json():null).catch(()=>null)
-]).then(([cal,fc])=>{
+const CACHE={};
+function charger(){
+const k=st.culture;
+(CACHE[k]?Promise.resolve(CACHE[k]):Promise.all([
+  fetch(`calendriers_${k}.json`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}),
+  fetch(`prevision_${k}_derniere.json`).then(r=>r.ok?r.json():null).catch(()=>null)
+])).then(([cal,fc])=>{
+  CACHE[k]=[cal,fc];
+  if(k!==st.culture)return;
   CAL=cal;FC=fc;
   if(FC){const d=iso(FC.date_prevision);
     $("#fcInfo").textContent=`${fmtL(d)} · ${FC.scenarios.length} scénarios (saisons ${FC.scenarios[0]}–${FC.scenarios[FC.scenarios.length-1]})`;
-    $("#mW").textContent=CAL.parametres.WRSI_MIN;$("#mR").textContent=CAL.parametres.ru_mm_m_moy;
+    document.querySelectorAll(".mW").forEach(e=>e.textContent=CAL.parametres.WRSI_MIN);$("#mR").textContent=CAL.parametres.ru_mm_m_moy;
     if(FC.jours_eval.length){$("#mapDay").max=FC.jours_eval.length-1;st.mapDay=FC.jours_eval.length-1;$("#mapDay").value=st.mapDay;$("#mapDayVal").textContent=fmt(iso(FC.jours_eval[st.mapDay]));}
     $("#foot").textContent=`Données : pluie TAMSAT v3.2 (Université de Reading) jusqu'au ${fmtL(new Date(d.getTime()-864e5))} ; météo NASA POWER ; sol SoilGrids 2.0 (ISRIC). Zone : ${CAL.zone}.`;
   }else{$("#fcInfo").textContent="indisponible";}
   renderAll();
 }).catch(e=>{$("#verdict").innerHTML=`<p class="err">Les données n'ont pas pu être chargées (${e.message}). Rechargez la page.</p>`;});
+}
+charger();
 })();
 </script>

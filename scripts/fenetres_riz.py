@@ -28,7 +28,10 @@ for _s in (sys.stdout, sys.stderr):
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("OUTDIR", os.path.join(ICI, "web"))
-CYCLES = (100, 110, 120)
+CULTURE = os.environ.get("CULTURE", "riz")
+PARAM = B.choisir_culture(CULTURE)
+CYCLES = PARAM["cycles"]
+SUFFIXE = "riz" if CULTURE == "riz" else CULTURE
 REGLE_3J, REGLE_10J = 20.0, 40.0     # règle de semis : ≥ 20 mm en 3 jours ou ≥ 40 mm en 10 jours (pluie observée)
 DEB, FIN = (3, 1), (7, 31)          # période de semis évaluée
 AN_MIN, AN_MAX = 2005, 2024          # années complètes servant de climatologie et de scénarios
@@ -174,9 +177,10 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     jours = dates_semis(2027)
     cj = {"zone": "Marahoué (6,25–7,75° N ; 6,75–5,25° O)", "annees": f"{annees[0]}–{annees[-1]}",
-          "methode": "bilan hydrique riz (FAO-56, WRSI)",
+          "culture": CULTURE, "culture_nom": PARAM["nom"], "cycles_disponibles": list(CYCLES),
+          "methode": f"bilan hydrique {PARAM['nom']} (FAO-56, WRSI)",
           "regle_semis": {"mm_3j": REGLE_3J, "mm_10j": REGLE_10J},
-          "parametres": {"p": B.P_RIZ, "WRSI_MIN": B.WRSI_MIN, "ks_fort": B.KS_FORT, "jours_stress": B.RUN_STRESS,
+          "parametres": {"p": B.P_RIZ, "profondeur_racines_cm": PARAM["racines"][1] / 10, "WRSI_MIN": B.WRSI_MIN, "ks_fort": PARAM.get("ks_fort", B.KS_FORT), "jours_stress": PARAM.get("jours_stress", B.RUN_STRESS),
                          "tmax_crit": B.TMAX_CRIT, "ru_mm_m_moy": round(float(ru.mean()), 0)},
           "cycles": {}}
     for L in CYCLES:
@@ -185,10 +189,10 @@ def main():
                                 "faux_depart": r3(fs), "wrsi_med": r3(c["wrsi_med"]), "causes": c["causes"],
                                 "par_annee": {str(y): round(float(v.mean()), 3) for y, v in zip(annees, c["succ_annee"])},
                                 "reussite_regle": r3(c["reussite_regle"]), "part_regle": r3(c["part_regle"])}
-    json.dump(cj, open(os.path.join(OUT, "calendriers_riz.json"), "w", encoding="utf-8"),
+    json.dump(cj, open(os.path.join(OUT, f"calendriers_{SUFFIXE}.json"), "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
     fc = prevision(dates, pluie, et0, tmax, cap, etats)
-    json.dump(fc, open(os.path.join(OUT, "prevision_riz_derniere.json"), "w", encoding="utf-8"),
+    json.dump(fc, open(os.path.join(OUT, f"prevision_{SUFFIXE}_derniere.json"), "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
     print("Écrit :", OUT)
 

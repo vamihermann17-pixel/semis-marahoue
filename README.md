@@ -1,9 +1,13 @@
-# Fenêtres de semis du riz pluvial — Marahoué (Côte d'Ivoire)
+# Fenêtres de semis du riz et du maïs pluviaux — Marahoué (Côte d'Ivoire)
 
 Page web : https://vamihermann17-pixel.github.io/semis-marahoue/
 
-Probabilité qu'un semis de riz pluvial réussisse selon la date (1er mars – 31 juillet) et la durée
-du cycle (100, 110 ou 120 jours), calculée avec un **bilan hydrique journalier propre au riz**.
+Probabilité qu'un semis de riz ou de maïs pluvial réussisse selon la date (1er mars – 31 juillet) et la
+durée du cycle (riz : 100, 110, 120 j ; maïs : 90, 105, 120 j), calculée avec un **bilan hydrique
+journalier propre à chaque culture** (`CULTURE=riz` ou `CULTURE=mais`).
+
+Maïs (FAO-56) : 0–100 cm, Kc 0,4 → 1,2 → 0,5, racines de 10 à 100 cm, p = 0,55 ; échec si Ks < 0,7
+3 jours de suite à la levée ou autour de la sortie des soies (55 % du cycle, −7 à +14 j).
 
 ## Méthode
 - `scripts/bilan_riz.py` : bilan hydrique FAO-56 sur 0–60 cm (3 couches). Kc du riz 0,5 → 1,15 → 0,8,
