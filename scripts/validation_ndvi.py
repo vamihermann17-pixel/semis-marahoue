@@ -132,6 +132,7 @@ def main():
     ind["pluie TAMSAT juillet"] = pj
 
     res = {}
+    series = {"annees": [int(a) for a in ANS]}
     for nom_cible, k in (("EVI août–oct.", 1), ("EVI sept.–nov.", 2)):
         cible = anomalies(evi[k])
         res[nom_cible] = {}
@@ -140,11 +141,14 @@ def main():
             ax = anomalies(x)
             r_pool, n = spearman(ax.ravel(), cible.ravel())
             zx, zc = np.nanmean(ax, axis=(1, 2)), np.nanmean(cible, axis=(1, 2))
+            series.setdefault(nom_cible, {"EVI": [round(float(v), 5) for v in zc]})[nom] = [round(float(v), 5) for v in zx]
             r_zone, _ = spearman(zx, zc)
             p = p_perm(zx, zc)
             res[nom_cible][nom] = {"r_mailles": round(r_pool, 3), "n": n, "r_zone": round(r_zone, 3), "p_zone": round(p, 4)}
             print(f"  {nom:45s} mailles r = {r_pool:+.2f} (n = {n}) | zone r = {r_zone:+.2f} (p = {p:.3f})")
     json.dump(res, open(os.path.join(ICI, "validation", "validation_ndvi.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+    json.dump(series, open(os.path.join(ICI, "validation", "ndvi_series_zone.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
 
