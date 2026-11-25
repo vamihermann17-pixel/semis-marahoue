@@ -32,7 +32,7 @@ for _s in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
-L = int(os.environ.get("CYCLE_RIZ", 110))
+L = int(os.environ.get("CYCLE_RIZ", 0)) or F.CYCLES[1]          # cycle médian de la culture par défaut
 EMISSIONS = [(12, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
 SAISONS = list(range(2006, 2026))
 
@@ -57,7 +57,7 @@ def main():
     cap = B.capacites(ru)
     etats = B.simuler_jachere(pluie, et0, cap)
     idx = {d: i for i, d in enumerate(dates)}
-    J = B.J_GERM + L + 2
+    J = B.duree_forcage(L)
 
     # 1. Réussite « observée » (vraie météo) pour chaque saison, date de semis, maille
     obs = {}
@@ -113,8 +113,10 @@ def main():
                     "n_cas": int(len(P)), "frequence_reussite": round(float(O.mean()), 3)}
         print(f"Émission {nom} : BSS {res[nom]['BSS']:+.3f}, AUC {res[nom]['ROC_AUC']:.3f} "
               f"(climatologie {res[nom]['ROC_AUC_climatologie']:.3f}), n = {len(P)}")
-    json.dump({"cycle": L, "saisons": [SAISONS[0], SAISONS[-1]], "resultats": res},
-              open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "validation_retrospective.json"), "w",
+    nom = "validation_retrospective.json" if F.CULTURE == "riz" else f"validation_retrospective_{F.CULTURE}.json"
+    json.dump({"culture": F.CULTURE, "cycle": L, "saisons": [SAISONS[0], SAISONS[-1]], "resultats": res},
+              open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "validation", nom) if F.CULTURE != "riz" else
+                   os.path.join(os.path.dirname(os.path.abspath(__file__)), nom), "w",
                    encoding="utf-8"), ensure_ascii=False, indent=1)
 
 

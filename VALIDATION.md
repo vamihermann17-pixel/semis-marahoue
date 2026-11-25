@@ -18,6 +18,20 @@ Pour chaque saison, on refait la prévision telle qu'elle aurait été émise le
 | 1er avril | 0,000 | 0,724 | 0,723 |
 | 1er mai | +0,002 | 0,678 | 0,674 |
 
+**Les quatre cultures** (cycle médian de chacune ; gain sur la climatologie en score de Brier, aire ROC entre
+parenthèses ; 36 mailles, saisons 2006–2025) :
+
+| Émission | Riz 110 j | Maïs 105 j | Arachide 105 j | Igname 240 j (plantation dès le 1er déc.) |
+|---|---|---|---|---|
+| 1er décembre | 0,0 % (0,736) | −0,3 % (0,778) | +0,2 % (0,740) | +0,1 % (0,819) |
+| 1er février | +0,1 % (0,739) | 0,0 % (0,782) | +0,5 % (0,741) | +0,4 % (0,858) |
+| 1er mars | +0,3 % (0,740) | +0,8 % (0,784) | +0,2 % (0,740) | +0,2 % (0,882) |
+| 1er avril | 0,0 % (0,724) | −0,3 % (0,734) | +0,3 % (0,754) | +0,2 % (0,895) |
+| 1er mai | +0,2 % (0,678) | +0,1 % (0,698) | +0,2 % (0,719) | +0,4 % (0,889) |
+
+Le résultat ne dépend pas de la culture : le gain reste compris entre −0,3 % et +0,8 %. Pour l'igname, même une
+prévision émise le 1er décembre pour une plantation le lendemain n'apporte rien : la semenceau attend les pluies.
+
 **Conclusion.** L'état du sol au moment de l'émission n'apporte pas d'information utile au-delà de la
 climatologie : la réserve de 0–60 cm (environ 70 mm) se vide ou se remplit en quelques semaines.
 La « prévision » actuelle équivaut donc à la climatologie de chaque date de semis. Un gain réel
