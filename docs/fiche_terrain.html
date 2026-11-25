@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche de terrain — suivi des parcelles Marahoué</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font: 10.5pt/1.35 "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  h1 { font-size: 15pt; margin: 0 0 2mm; }
+  h2 { font-size: 11.5pt; margin: 5mm 0 2mm; border-bottom: 1.5px solid #111; padding-bottom: 1mm; }
+  p { margin: 0 0 2mm; }
+  .petit { font-size: 8.5pt; color: #333; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #555; padding: 1.6mm 2mm; vertical-align: top; }
+  th { background: #eee; font-weight: 600; text-align: left; font-size: 9pt; }
+  .champ td { height: 9mm; }
+  .lignes td { height: 8mm; }
+  .case { display: inline-block; width: 3.2mm; height: 3.2mm; border: 1px solid #111; margin: 0 1mm 0 3mm; vertical-align: -0.5mm; }
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .bouton { position: fixed; top: 10px; right: 10px; padding: 8px 14px; font: 600 11pt "Segoe UI", sans-serif; }
+  @media print { .bouton { display: none; } }
+</style>
+</head>
+<body>
+<button class="bouton" onclick="window.print()">Imprimer</button>
+
+<div class="page">
+  <h1>Fiche de suivi de parcelle — Marahoué 2027</h1>
+  <p class="petit">Une fiche par parcelle. À recopier dans l'outil « Suivi des parcelles » dès que le réseau le permet. Ne pas écrire le nom du producteur : le code de parcelle suffit.</p>
+
+  <h2>1. Parcelle</h2>
+  <table class="champ">
+    <tr><th style="width:22%">Code parcelle</th><td style="width:28%"></td><th style="width:20%">Village</th><td></td></tr>
+    <tr><th>Culture</th><td colspan="3">Riz<span class="case"></span> Maïs<span class="case"></span> Arachide<span class="case"></span> Igname<span class="case"></span></td></tr>
+    <tr><th>Variété</th><td></td><th>Cycle (jours)</th><td></td></tr>
+    <tr><th>Date de semis / plantation</th><td></td><th>Pluie des 3 jours avant (mm)</th><td></td></tr>
+    <tr><th>Humidité du sol au semis</th><td colspan="3">sec<span class="case"></span> frais<span class="case"></span> humide<span class="case"></span></td></tr>
+    <tr><th>Superficie (m²)</th><td></td><th>Densité visée (plants/m²)</th><td></td></tr>
+    <tr><th>Position</th><td colspan="3">plateau<span class="case"></span> haut de pente<span class="case"></span> mi-pente<span class="case"></span> bas de pente<span class="case"></span></td></tr>
+    <tr><th>Texture du sol</th><td colspan="3">sableux<span class="case"></span> sablo-argileux<span class="case"></span> argileux<span class="case"></span> gravillonnaire<span class="case"></span></td></tr>
+    <tr><th>Profondeur utile (cm)</th><td></td><th>Latitude / longitude</th><td></td></tr>
+  </table>
+
+  <h2>2. Levée (15 jours après semis) — igname : sortie des pousses</h2>
+  <table class="champ">
+    <tr><th style="width:22%">Date</th><td style="width:28%"></td><th style="width:20%">Ressemis / remplacement</th><td>non<span class="case"></span> oui<span class="case"></span></td></tr>
+    <tr><th>Plants levés par m²</th><td colspan="3">placette 1 : ........ &nbsp;&nbsp; placette 2 : ........ &nbsp;&nbsp; placette 3 : ........</td></tr>
+    <tr><th>Igname</th><td colspan="3">date de sortie des premières pousses : ................ &nbsp;&nbsp; buttes avec pousse sur 20 comptées : ........</td></tr>
+  </table>
+  <p class="petit">Placette de 1 m² (cadre de 1 m × 1 m) posée en 3 endroits représentatifs, loin des bordures.</p>
+
+  <h2>3. Suivi tous les 15 jours</h2>
+  <table class="lignes">
+    <tr><th style="width:16%">Date</th><th style="width:30%">Flétrissement</th><th style="width:14%">Hauteur (cm)</th><th style="width:14%">Couverture (%)</th><th>Remarques</th></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td>aucun<span class="case"></span> matin<span class="case"></span> journée<span class="case"></span></td><td></td><td></td><td></td></tr>
+  </table>
+</div>
+
+<div class="page">
+  <h1>Fiche de suivi de parcelle — suite</h1>
+  <table class="champ"><tr><th style="width:22%">Code parcelle</th><td></td></tr></table>
+
+  <h2>4. Floraison — maïs : sortie des soies — igname : tubérisation</h2>
+  <table class="champ">
+    <tr><th style="width:40%">Date de 50 % de floraison (ou des soies)</th><td></td></tr>
+    <tr><th>Jours de flétrissement dans les 2 semaines autour</th><td></td></tr>
+    <tr><th>Igname : feuilles jaunies (%)</th><td></td></tr>
+  </table>
+
+  <h2>5. Récolte</h2>
+  <table class="champ">
+    <tr><th style="width:40%">Date de récolte</th><td></td></tr>
+    <tr><th>Rendement, placettes de 5 m² (kg, grain ou gousses sèches, tubercules frais)</th><td>placette 1 : ........ &nbsp; placette 2 : ........ &nbsp; placette 3 : ........</td></tr>
+    <tr><th>Riz, maïs : grains vides (%)</th><td></td></tr>
+    <tr><th>Arachide : état des gousses</th><td>sèches<span class="case"></span> humides<span class="case"></span> pourries ou moisies<span class="case"></span></td></tr>
+    <tr><th>Arachide : pluie pendant la récolte et le séchage</th><td>non<span class="case"></span> oui<span class="case"></span></td></tr>
+    <tr><th>Igname : tubercules pourris (%)</th><td></td></tr>
+  </table>
+  <p class="petit">Placette de 5 m² (par exemple 2 m × 2,5 m), 3 placettes par parcelle. Peser le grain séché au soleil 3 jours.</p>
+
+  <h2>6. Pluviomètre du village (relevé chaque matin à 8 h)</h2>
+  <p class="petit">Village : ................................ &nbsp; Mois : ................ &nbsp; Pluie des 24 dernières heures, en mm (0 s'il n'a pas plu).</p>
+  <table class="lignes">
+    <tr><th>Jour</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th></tr>
+    <tr><th>mm</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>Jour</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th></tr>
+    <tr><th>mm</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>Jour</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th><th>29</th><th>30</th><th>31</th><th colspan="2">Total</th></tr>
+    <tr><th>mm</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td colspan="2"></td></tr>
+  </table>
+
+  <h2>Remarques (ravageurs, maladies, désherbage, engrais, ressemis…)</h2>
+  <table class="lignes"><tr><td style="height:30mm"></td></tr></table>
+  <p class="petit" style="margin-top:3mm">Observateur : ................................ &nbsp;&nbsp; Signature : ................................</p>
+</div>
+</body>
+</html>
