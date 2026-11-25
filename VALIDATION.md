@@ -82,7 +82,29 @@ En mars, les échecs de levée passent de 6 % à 2 %. En mai–juin, la règle n
 viennent de la sécheresse à la floraison. La page affiche chaque semaine si la règle est remplie,
 maille par maille, avec la pluie TAMSAT des 10 derniers jours.
 
-## 5. Protocole de validation au champ (saisons 2027 et 2028)
+## 5. Prévisions saisonnières en terciles (C3S, PRESASS) : gain maximal
+
+**Test.** Avant d'acquérir les prévisions C3S, on mesure ce que rapporterait une pondération des
+scénarios par terciles si la prévision était parfaite ou très bonne. Pour un semis du mois m, la
+fenêtre critique est m+1 à m+3 ; chaque saison passée est classée sèche, normale ou humide selon sa
+pluie de zone dans cette fenêtre (terciles sans la saison prévue). Émission au 1er février, saisons
+2006–2025, cycle 110 j. Script : `scripts/ponderation_terciles.py`.
+
+| Prévision des terciles | Gain sur la climatologie (Brier) | Aire ROC |
+|---|---|---|
+| Climatologie (poids égaux) | — | 0,740 |
+| Parfaite (100 % sur le tercile observé) | −4,4 % | 0,716 |
+| Très bonne (70 % sur le bon tercile) | +1,2 % | 0,744 |
+| Réaliste (50 % sur le bon tercile) | +1,6 % | 0,746 |
+| Sans qualité (50 % sur un tercile au hasard) | −1,1 % | 0,734 |
+
+**Conclusion.** Même une prévision saisonnière parfaite n'apporterait presque rien : la réussite
+d'un semis ne dépend pas du cumul de pluie sur trois mois, mais de la répartition des pluies
+(séquences sèches à la levée et à la floraison), que les prévisions saisonnières ne prévoient pas.
+La pondération C3S n'est donc pas mise en place. Les leviers utiles sont le choix du cycle et de la
+date (climatologie), la règle de semis après une bonne pluie et la validation au champ.
+
+## 6. Protocole de validation au champ (saisons 2027 et 2028)
 
 **Objectif.** Vérifier, sur parcelles paysannes, que la probabilité de réussite calculée pour une date
 de semis correspond à la réussite observée, et caler les seuils du modèle (stress à la levée et à la

@@ -1,0 +1,35 @@
+{
+ "emission": "1er février",
+ "saisons": [
+  2006,
+  2025
+ ],
+ "cycle": 110,
+ "scores": {
+  "climatologie": {
+   "brier": 0.125,
+   "BSS": 0.0,
+   "ROC_AUC": 0.74
+  },
+  "parfaite": {
+   "brier": 0.1305,
+   "BSS": -0.044,
+   "ROC_AUC": 0.716
+  },
+  "très bonne (70 %)": {
+   "brier": 0.1235,
+   "BSS": 0.012,
+   "ROC_AUC": 0.744
+  },
+  "réaliste (50 %)": {
+   "brier": 0.123,
+   "BSS": 0.016,
+   "ROC_AUC": 0.746
+  },
+  "sans qualité": {
+   "brier": 0.1264,
+   "BSS": -0.011,
+   "ROC_AUC": 0.734
+  }
+ }
+}
