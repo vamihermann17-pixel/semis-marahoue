@@ -178,6 +178,8 @@ td{font-variant-numeric:tabular-nums}
         <p class="muted small">Prévisions refaites au 1er décembre, février, mars, avril et mai, comparées à ce qui s'est passé.</p>
         <p><span class="pill warn">Pas de gain sur la climatologie</span></p>
         <p class="small">Gain mesuré (score de Brier) : entre −0,1 % et +0,3 % selon la date. L'état du sol d'aujourd'hui ne dit presque rien de la réussite d'un semis dans plusieurs semaines : la réserve de 0–60 cm se renouvelle vite. Les probabilités affichées valent donc surtout comme <b>climatologie de chaque date de semis</b>. Un vrai gain viendra des prévisions saisonnières et des prévisions météo à 1–2 semaines au moment de semer.</p>
+        <h3 class="vh" style="margin-top:12px">Et les prévisions météo à 10 jours ?</h3>
+        <p class="small">Testées sur 2024–2025 avec les prévisions ECMWF archivées : elles <b>dégradent</b> les probabilités (−12 %). Sur la Marahoué, la pluie prévue au-delà de 1–2 jours ne ressemble presque pas à la pluie tombée (corrélation 0,08 sur 8 jours). Elles ne sont donc pas utilisées ; la pluie déjà tombée, elle, aide à choisir le jour du semis.</p>
       </div>
     </div>
   </section>
@@ -190,6 +192,7 @@ td{font-variant-numeric:tabular-nums}
         <li>Réglez la probabilité minimale. 80 % convient à la plupart des producteurs ; celui qui ne peut pas ressemer peut viser 90 %.</li>
         <li>Le verdict donne la première date favorable de la prévision, le meilleur jour et la fenêtre historique.</li>
         <li>La carte montre les secteurs qui atteignent le seuil en premier.</li>
+        <li>Le jour venu, semez après une bonne pluie (≥ 20 mm en 3 jours ou ≥ 40 mm en 10 jours) : en mars, les échecs de levée passent de 6 % à 2 %. La colonne « Après une bonne pluie » donne la réussite quand on suit cette règle.</li>
       </ol></div>
       <div><h3>Méthode</h3><ul>
         <li>Bilan hydrique journalier du riz pluvial (FAO-56) sur 0–60 cm : Kc 0,5 → 1,15 → 0,8, racines de 10 à 60 cm, stress dès que 20 % de l'eau utile des racines est consommée.</li>
@@ -238,6 +241,14 @@ function verdict(){
   const mx=Math.max(...c.reussite), im=c.reussite.indexOf(mx);
   const pl=plages(c.reussite.map(r=>r>=st.p));
   const tiles=[];
+  if(FC&&FC.pluie_recente&&CAL.regle_semis){
+    const pr=FC.pluie_recente, rg=CAL.regle_semis;let ok=0,n=0;
+    pr.mm_3j.forEach((row,i)=>row.forEach((v,j)=>{if(v==null)return;n++;if(v>=rg.mm_3j||pr.mm_10j[i][j]>=rg.mm_10j)ok++;}));
+    const tot=pr.zone_mm_jour.reduce((a,b)=>a+(b||0),0), fin=iso(pr.jusqu_au), m=fin.getUTCMonth()+1, enSaison=m>=3&&m<=7;
+    tiles.push({lab:"Aujourd'hui · sol prêt pour semer ?",big:`${ok} / ${n} mailles`,
+      pill:ok/n>=.5?["good","Conditions réunies"]:ok>0?["warn","Par endroits"]:["bad","Pas encore"],
+      small:`Pluie des 10 derniers jours : ${Math.round(tot)} mm en moyenne (TAMSAT, jusqu'au ${fmt(fin)}). Règle : ≥ ${rg.mm_3j} mm en 3 jours ou ≥ ${rg.mm_10j} mm en 10 jours.${enSaison?"":" Hors période de semis."}`});
+  }
   if(FC){
     const pz=FC.cycles[st.cycle].proba_zone, je=FC.jours_eval;
     const idx=pz.map((p,i)=>p!=null&&p>=st.p?i:-1).filter(i=>i>=0);
@@ -389,13 +400,14 @@ function calChart(){
 /* ---------- Tableau mensuel ---------- */
 function monthTable(){
   const c=CAL.cycles[st.cycle],t=$("#monthTbl");
-  let h=`<thead><tr><th>Mois</th><th>Réussite</th><th>WRSI médian</th><th>Faux départs</th><th>Jours ≥ seuil</th></tr></thead><tbody>`;
+  let h=`<thead><tr><th>Mois</th><th>Réussite</th><th>Après une bonne pluie</th><th>WRSI médian</th><th>Faux départs</th><th>Jours ≥ seuil</th></tr></thead><tbody>`;
   ["03","04","05","06","07"].forEach(m=>{const ix=c.dates.map((d,i)=>d.endsWith("/"+m)?i:-1).filter(i=>i>=0);
     const r=ix.reduce((s,i)=>s+c.reussite[i],0)/ix.length;
     const fv=ix.map(i=>c.faux_depart[i]).filter(v=>v!=null&&!isNaN(v));const f=fv.length?fv.reduce((a,b)=>a+b,0)/fv.length:null;
     const ok=ix.filter(i=>c.reussite[i]>=st.p).length;
     const wv=ix.map(i=>c.wrsi_med[i]).filter(v=>v!=null).sort((a,b)=>a-b);const w=wv.length?wv[Math.floor(wv.length/2)]:null;
-    h+=`<tr><td>${MOISL[+m-1]}</td><td>${pct(r)}<span class="bar" style="width:${Math.round(r*60)}px"></span></td><td>${w==null?"–":Math.round(w)}</td><td>${pct(f)}</td><td>${ok} / ${ix.length}</td></tr>`;});
+    const rv=c.reussite_regle?ix.map(i=>c.reussite_regle[i]).filter(v=>v!=null):[];const rr=rv.length?rv.reduce((a,b)=>a+b,0)/rv.length:null;
+    h+=`<tr><td>${MOISL[+m-1]}</td><td>${pct(r)}<span class="bar" style="width:${Math.round(r*60)}px"></span></td><td>${pct(rr)}</td><td>${w==null?"–":Math.round(w)}</td><td>${pct(f)}</td><td>${ok} / ${ix.length}</td></tr>`;});
   t.innerHTML=h+"</tbody>";
   const cs=c.causes||{},pa=CAL.parametres;
   $("#calibTxt").innerHTML=`Échecs (part de tous les semis simulés, cycle ${st.cycle} j) : ${Object.entries(cs).map(([k,v])=>`${k} ${v}`).join(", ")}. WRSI = part des besoins en eau du riz couverts sur le cycle (100 = aucun déficit) ; réussite exigée : WRSI ≥ ${pa.WRSI_MIN}.`;

@@ -1,0 +1,47 @@
+{
+ "saisons": [
+  2024,
+  2025
+ ],
+ "cycle": 110,
+ "jours_prevus": 8,
+ "rapport_pluie_TAMSAT_sur_ECMWF": {
+  "2024": 1.34,
+  "2025": 1.23
+ },
+ "scores": {
+  "réussite – climatologie (A)": {
+   "brier": 0.1955,
+   "ROC_AUC": 0.75,
+   "n": 10980,
+   "frequence": 0.698
+  },
+  "réussite – ECMWF brut (B)": {
+   "brier": 0.2194,
+   "ROC_AUC": 0.669,
+   "n": 10980,
+   "frequence": 0.698,
+   "BSS_vs_climatologie": -0.122
+  },
+  "réussite – ECMWF corrigé (B')": {
+   "brier": 0.2189,
+   "ROC_AUC": 0.681,
+   "n": 10980,
+   "frequence": 0.698,
+   "BSS_vs_climatologie": -0.12
+  },
+  "levée – climatologie (A)": {
+   "brier": 0.0466,
+   "ROC_AUC": 0.875,
+   "n": 10980,
+   "frequence": 0.941
+  },
+  "levée – ECMWF brut (B)": {
+   "brier": 0.0695,
+   "ROC_AUC": 0.546,
+   "n": 10980,
+   "frequence": 0.941,
+   "BSS_vs_climatologie": -0.491
+  }
+ }
+}

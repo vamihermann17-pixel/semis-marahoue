@@ -29,6 +29,7 @@ for _s in (sys.stdout, sys.stderr):
 ICI = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("OUTDIR", os.path.join(ICI, "web"))
 CYCLES = (100, 110, 120)
+REGLE_3J, REGLE_10J = 20.0, 40.0     # règle de semis : ≥ 20 mm en 3 jours ou ≥ 40 mm en 10 jours (pluie observée)
 DEB, FIN = (3, 1), (7, 31)          # période de semis évaluée
 AN_MIN, AN_MAX = 2005, 2024          # années complètes servant de climatologie et de scénarios
 r3 = lambda a: [None if not np.isfinite(x) else round(float(x), 3) for x in np.ravel(a)]
@@ -77,7 +78,7 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
     res = {}
     for L in CYCLES:
         J = B.J_GERM + L + 2
-        succ, causes, wrsi = [], [], []
+        succ, causes, wrsi, r3, r10 = [], [], [], [], []
         for y in annees:
             sd = dates_semis(y)
             i0 = np.array([idx[d] for d in sd])
@@ -85,12 +86,17 @@ def calendrier(dates, pluie, et0, tmax, cap, etats):
             g = lambda a: a[i0[None, :] + np.arange(J)[:, None]]       # (J, n, lat, lon)
             r = B.simuler_semis(W0, cap[:, None], g(pluie), g(et0), g(tmax), L)
             succ.append(r["reussite"]); causes.append(r["cause"]); wrsi.append(r["wrsi"])
+            r3.append(np.stack([pluie[i - 3:i].sum(0) for i in i0])); r10.append(np.stack([pluie[i - 10:i].sum(0) for i in i0]))
         succ, causes, wrsi = np.array(succ), np.array(causes), np.array(wrsi)   # (an, n, lat, lon)
+        regle = (np.array(r3) >= REGLE_3J) | (np.array(r10) >= REGLE_10J)
         p = succ.mean(axis=(0, 2, 3))
         n = causes.size
         res[L] = {"reussite": p, "wrsi_med": np.median(wrsi, axis=(0, 2, 3)),
                   "causes": {B.CAUSES[c]: f"{(causes == c).sum() / n:.0%}" for c in B.CAUSES},
-                  "succ_annee": succ.mean(axis=(2, 3))}
+                  "succ_annee": succ.mean(axis=(2, 3)),
+                  "reussite_regle": np.array([succ[:, k][regle[:, k]].mean() if regle[:, k].sum() >= 20 else np.nan
+                                              for k in range(succ.shape[1])]),
+                  "part_regle": regle.mean(axis=(0, 2, 3))}
         mx = p.max(); im = int(p.argmax()); win = np.where(p >= 0.8 * mx)[0]
         jours = dates_semis(2027)
         print(f"Cycle {L} j : maximum {mx:.0%} le {jours[im]:%d/%m}, fenêtre {jours[win[0]]:%d/%m} → "
@@ -137,6 +143,9 @@ def prevision(dates, pluie, et0, tmax, cap, etats):
     out = {"date_prevision": str(emis), "scenarios": ys, "jours": [str(d) for d in jours],
            "humidite_membres": [r3(rel30[:, s].mean(axis=(1, 2))) for s in range(len(ys))],
            "pluie_obs_30j": round(float(pluie[-30:].sum(0).mean()), 1),
+           "pluie_recente": {"jusqu_au": str(dates[-1]), "mm_3j": [r3(x) for x in pluie[-3:].sum(0)],
+                             "mm_10j": [r3(x) for x in pluie[-10:].sum(0)],
+                             "jours": [str(d) for d in dates[-10:]], "zone_mm_jour": r3(pluie[-10:].mean(axis=(1, 2)))},
            "jours_eval": [str(d) for d in sd], "lat": r3(LAT), "lon": r3(LON), "cycles": {}}
     for L in CYCLES:
         J = B.J_GERM + L + 2
@@ -166,6 +175,7 @@ def main():
     jours = dates_semis(2027)
     cj = {"zone": "Marahoué (6,25–7,75° N ; 6,75–5,25° O)", "annees": f"{annees[0]}–{annees[-1]}",
           "methode": "bilan hydrique riz (FAO-56, WRSI)",
+          "regle_semis": {"mm_3j": REGLE_3J, "mm_10j": REGLE_10J},
           "parametres": {"p": B.P_RIZ, "WRSI_MIN": B.WRSI_MIN, "ks_fort": B.KS_FORT, "jours_stress": B.RUN_STRESS,
                          "tmax_crit": B.TMAX_CRIT, "ru_mm_m_moy": round(float(ru.mean()), 0)},
           "cycles": {}}
@@ -173,7 +183,8 @@ def main():
         c = cal[L]
         cj["cycles"][str(L)] = {"dates": [f"{d:%d/%m}" for d in jours], "reussite": r3(c["reussite"]),
                                 "faux_depart": r3(fs), "wrsi_med": r3(c["wrsi_med"]), "causes": c["causes"],
-                                "par_annee": {str(y): round(float(v.mean()), 3) for y, v in zip(annees, c["succ_annee"])}}
+                                "par_annee": {str(y): round(float(v.mean()), 3) for y, v in zip(annees, c["succ_annee"])},
+                                "reussite_regle": r3(c["reussite_regle"]), "part_regle": r3(c["part_regle"])}
     json.dump(cj, open(os.path.join(OUT, "calendriers_riz.json"), "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
     fc = prevision(dates, pluie, et0, tmax, cap, etats)

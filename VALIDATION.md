@@ -1,6 +1,6 @@
 # Validation du bilan hydrique du riz pluvial — Marahoué
 
-État au 24 novembre 2026. Scripts : `scripts/validation_retrospective.py`, `scripts/validation_ndvi.py`.
+État au 24 novembre 2026. Scripts : `scripts/validation_retrospective.py`, `scripts/validation_ndvi.py`, `scripts/validation_meteo10j.py`.
 
 ## 1. Test de prévision rétrospectif (2006–2025)
 
@@ -44,7 +44,45 @@ grossière, beaucoup moins. **Limite :** l'EVI mesure toute la végétation non 
 ce test valide la dynamique de l'eau du sol, pas les seuils de réussite du riz (germination,
 floraison, WRSI ≥ 75). Seules des observations au champ peuvent valider ces seuils.
 
-## 3. Protocole de validation au champ (saisons 2027 et 2028)
+## 4. Prévisions météo à 10 jours (ECMWF) et règle de semis
+
+**Test.** Saisons 2024 et 2025 (seules années où Open-Meteo archive les prévisions ECMWF IFS 0,25° par
+échéance), 36 mailles, cycle 110 j. Pour chaque date de semis, la pluie des jours J à J+7 des
+scénarios est remplacée par la prévision ECMWF émise le jour du semis. Script :
+`scripts/validation_meteo10j.py`.
+
+| Prévision | Score de Brier | Aire ROC | Gain sur la climatologie |
+|---|---|---|---|
+| Réussite, climatologie (prévision actuelle) | 0,196 | 0,750 | — |
+| Réussite, avec ECMWF brut | 0,219 | 0,669 | −12 % |
+| Réussite, avec ECMWF corrigé du biais | 0,219 | 0,681 | −12 % |
+| Levée, climatologie | 0,047 | 0,875 | — |
+| Levée, avec ECMWF brut | 0,070 | 0,546 | −49 % |
+
+Pluie cumulée prévue contre pluie TAMSAT, corrélation de rang : 0,31 (J0–J1), 0,18 (J0–J3),
+0,08 (J0–J7) à la maille ; ECMWF sous-estime la pluie de mars–juillet de 20 à 25 %.
+
+**Conclusion.** Sur la Marahoué, la prévision de pluie au-delà de 1–2 jours n'a presque pas de
+qualité, comme l'ont montré Vogel et al. (2018, 2020) pour l'Afrique tropicale du Nord. L'intégrer
+dégraderait les probabilités : elle n'est pas utilisée. Une prévision d'ensemble post-traitée pourrait
+apporter un léger gain ; à retester quand des archives d'ensemble seront disponibles.
+
+**Règle de semis sur la pluie observée.** Semer seulement après ≥ 20 mm en 3 jours ou ≥ 40 mm en
+10 jours (2005–2024, cycle 110 j) :
+
+| Mois | Semer à date fixe | Après ≥ 20 mm en 3 j | Après ≥ 40 mm en 10 j |
+|---|---|---|---|
+| mars | 90 % | 94 % | 96 % |
+| avril | 95 % | 95 % | 96 % |
+| mai | 73 % | 76 % | 74 % |
+| juin | 78 % | 78 % | 78 % |
+| juillet | 86 % | 93 % | 88 % |
+
+En mars, les échecs de levée passent de 6 % à 2 %. En mai–juin, la règle n'aide pas : les échecs
+viennent de la sécheresse à la floraison. La page affiche chaque semaine si la règle est remplie,
+maille par maille, avec la pluie TAMSAT des 10 derniers jours.
+
+## 5. Protocole de validation au champ (saisons 2027 et 2028)
 
 **Objectif.** Vérifier, sur parcelles paysannes, que la probabilité de réussite calculée pour une date
 de semis correspond à la réussite observée, et caler les seuils du modèle (stress à la levée et à la
