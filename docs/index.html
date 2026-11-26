@@ -49,6 +49,8 @@ select{font:inherit;padding:6px 8px;border-radius:8px;border:1px solid var(--lin
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:4px;align-content:start}
 .tile .big{font:700 1.6rem/1.1 var(--f-display)}
 .tile .small{font-size:.85rem;color:var(--muted)}
+.smadi{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--laterite);border-radius:10px;padding:12px 16px;font-size:.92rem}
+.smadi a{color:var(--water);font-weight:500}
 .pill{display:inline-block;font:600 .75rem/1 var(--f-body);padding:5px 9px;border-radius:99px;width:max-content}
 .pill.good{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
@@ -113,6 +115,8 @@ td{font-variant-numeric:tabular-nums}
   </div>
 
   <div class="verdict" id="verdict"></div>
+
+  <div class="smadi" id="smadiBox" hidden></div>
 
   <section class="panel" id="pFc">
     <div class="panel-head">
@@ -468,5 +472,23 @@ const k=st.culture;
 }).catch(e=>{$("#verdict").innerHTML=`<p class="err">Les données n'ont pas pu être chargées (${e.message}). Rechargez la page.</p>`;});
 }
 charger();
+})();
+
+// Encadré « Sécheresse agricole » : dernier mois de la page SMADI (même site)
+(function(){
+const MOISL=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const fr=(v,d)=>v.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+fetch("https://vamihermann17-pixel.github.io/smadi-marahoue/resume_smadi.json",{cache:"no-cache"})
+  .then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+    if(d.z==null)return;
+    const [y,m]=d.m.split("-").map(Number);
+    const etat=d.z>=1.5?["bad","sécheresse sévère"]:d.z>=1?["bad","sécheresse anormale"]:d.z>=.5?["warn","plus sec que la normale"]:d.z<=-.5?["good","plus humide que la normale"]:["good","proche de la normale"];
+    const b=document.getElementById("smadiBox");
+    b.innerHTML=`<span class="eyebrow">Sécheresse agricole (SMADI)</span>
+      <span><b>${MOISL[m-1]} ${y}</b> : <span class="pill ${etat[0]}">${etat[1]}</span> · anomalie z ${(d.z>0?"+":"")+fr(d.z,2)} · ${fr(d.pct_z,0)} % de la région avec z ≥ ${fr(d.seuil_z,1)}</span>
+      <span class="small muted">Utile pour les cultures déjà en place ; le SMADI suit mal la saison d'avril à juin et ne remplace pas les probabilités de semis ci-dessous.</span>
+      <a href="${d.page}">Voir la page SMADI →</a>`;
+    b.hidden=false;
+  }).catch(()=>{});
 })();
 </script>
